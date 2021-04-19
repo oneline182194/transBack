@@ -1,7 +1,9 @@
 <?php
 
-
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\GeneralController;
+use App\Http\Controllers\PasajesController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,4 +23,21 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::resource('usuarios',UserController::class)->middleware('auth:sanctum');
+
+Route::group(['prefix' => 'config'], function () {
+    Route::get('listEmpresas',[ GeneralController::class,'listEmpresas' ]);
+    Route::post('saveEmpresa',[ GeneralController::class,'saveEmpresa' ]); 
+
+    Route::get('listConductores',[ GeneralController::class,'listConductores' ]);
+    Route::post('saveConductor',[ GeneralController::class,'saveConductor' ]); 
+    Route::post('saveVehiculo',[ GeneralController::class,'saveVehiculo' ]); 
+
+    Route::get('listModelos',[ GeneralController::class,'listModelos' ]);
+
+});
+Route::group(['prefix' => 'pasajes'], function () {
+    Route::get('listTurnos/{origen}',[ PasajesController::class,'listTurnos' ]);
+    Route::post('saveTurnos',[ PasajesController::class,'saveTurnos' ]); 
+});
+
 
