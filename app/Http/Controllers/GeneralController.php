@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Consulta\Laravel\Consulta;
 use Illuminate\Http\Request;
 use DB;
 
@@ -76,13 +76,24 @@ class GeneralController extends Controller
     }
     public function buscarCliente($tipo,$documento){
         try {
-            if($tipo == '01'){ //Para las facturas
-
-            }else{ //Para las otros documentos
-
+            $getCliente = DB::table('personas')->where('documento',$documento)->get();
+            if(count($getCliente) > 0){
+                $setCliente = $getCliente[0];
+            }else{
+                $token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.MTYzMA.Z91bggUHVslRNsIRNi38ATsWKVqst0ZLeHjbHc3bN_4';
+                if($tipo == '01'){ 
+                    $jsonString = file_get_contents("https://dniruc.apisperu.com/api/v1/ruc/".$documento."?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im9uZWxpbmUuZnJlZWxhbmNlckBnbWFpbC5jb20ifQ.SZjMhu8PV9BNBtbhFFa2VRtZ_UJwB9Z07ZB85WWYRcE");
+                    $dataCliente = (array) json_decode($jsonString,true);
+                    $persona = [ 'documento' => $documento, 'nombres' => $dataCliente['data']->razonSocial ,'paterno' => '', 'materno' => ''];
+                }else{ 
+                    $jsonString = file_get_contents("https://dniruc.apisperu.com/api/v1/dni/".$documento."?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im9uZWxpbmUuZnJlZWxhbmNlckBnbWFpbC5jb20ifQ.SZjMhu8PV9BNBtbhFFa2VRtZ_UJwB9Z07ZB85WWYRcE");
+                    $dataCliente = json_decode($jsonString);
+                    $persona = [ 'documento' => $documento, 'paterno' => $dataCliente['data']['apellidoPaterno'], 'materno' => $dataCliente['data']['apellidoMaterno'], 'nombres' => $dataCliente['data']['nombres'] ];
+                }
+                $persona_id = DB::table('persona')->insertGetId($persona);
+                $getCliente = ['id' => $persona_id, 'nombres' => $persona['nombres'] .' '. $persona['paterno'] . ''. $persona['materno']];
             }
-            $data = DB::table('movil')->insertGetId($newVehiculo);
-            $response = [ 'status'=> true, 'data' =>  $data];
+            $response = [ 'status'=> true, 'data' => $getClient];
             $codeResponse = 200;
         } catch (\fException $e) {
             $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];

@@ -34,8 +34,9 @@ Route::group(['prefix' => 'config'], function () {
 
     Route::get('listModelos',[ GeneralController::class,'listModelos' ]);
     Route::get('listServicios',[ GeneralController::class,'listServicios' ]);
-    
 
+    Route::get('buscarCliente/{tipo}/{documento}',[ GeneralController::class,'buscarCliente' ]);
+    
 });
 Route::group(['prefix' => 'pasajes'], function () {
     Route::get('listTurnos/{origen}/{fecha}',[ PasajesController::class,'listTurnos' ]);
