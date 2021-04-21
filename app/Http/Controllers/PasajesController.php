@@ -14,7 +14,8 @@ class PasajesController extends Controller
                 'dia' => $request->dia,
                 'personal_id' => $request->personal_id,
                 'estado' => 1,
-                'estadoTurno_id'=> 1
+                'estadoTurno_id'=> 1,
+                'origen' => $request->region
             ];
             $data = DB::table('turnos')->insertGetId($newVehiculo);
             $response = [ 'status'=> true, 'data' =>  $data];
@@ -25,8 +26,8 @@ class PasajesController extends Controller
         }
         return response()->json( $response, $codeResponse );
     }
-    public function listTurnos($origen){
-        $list = DB::select('call listadoTurnos('.$origen.')');
+    public function listTurnos($origen,$fecha){
+        $list = DB::select('call listadoTurnos('.$origen.',"'.$fecha.'")');
         $response = [ 'status'=> true, 'data' =>  $list];
         return response()->json( $response, 200 );
     }

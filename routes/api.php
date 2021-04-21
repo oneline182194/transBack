@@ -33,10 +33,12 @@ Route::group(['prefix' => 'config'], function () {
     Route::post('saveVehiculo',[ GeneralController::class,'saveVehiculo' ]); 
 
     Route::get('listModelos',[ GeneralController::class,'listModelos' ]);
+    Route::get('listServicios',[ GeneralController::class,'listServicios' ]);
+    
 
 });
 Route::group(['prefix' => 'pasajes'], function () {
-    Route::get('listTurnos/{origen}',[ PasajesController::class,'listTurnos' ]);
+    Route::get('listTurnos/{origen}/{fecha}',[ PasajesController::class,'listTurnos' ]);
     Route::post('saveTurnos',[ PasajesController::class,'saveTurnos' ]); 
 });
 
