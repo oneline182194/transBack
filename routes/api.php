@@ -3,6 +3,7 @@
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\PasajesController;
+use App\Http\Controllers\EnviosController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -34,13 +35,20 @@ Route::group(['prefix' => 'config'], function () {
 
     Route::get('listModelos',[ GeneralController::class,'listModelos' ]);
     Route::get('listServicios',[ GeneralController::class,'listServicios' ]);
-
+    Route::get('listComprobantes',[ GeneralController::class,'listComprobantes' ]);
+    
     Route::get('buscarCliente/{tipo}/{documento}',[ GeneralController::class,'buscarCliente' ]);
     
 });
 Route::group(['prefix' => 'pasajes'], function () {
     Route::get('listTurnos/{origen}/{fecha}',[ PasajesController::class,'listTurnos' ]);
+    Route::get('getAsientos/{turnoId}',[ PasajesController::class,'getAsientos' ]); 
     Route::post('saveTurnos',[ PasajesController::class,'saveTurnos' ]); 
+    Route::post('savePasaje',[ PasajesController::class,'savePasaje' ]); 
+});
+Route::group(['prefix' => 'envios'], function () {
+    Route::post('listEnvios',[ EnviosController::class,'listEnvios' ]);
+    Route::post('saveEnvios',[ EnviosController::class,'saveEnvios' ]);
 });
 
 

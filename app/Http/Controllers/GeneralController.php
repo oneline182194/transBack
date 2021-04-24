@@ -69,6 +69,11 @@ class GeneralController extends Controller
         $response = [ 'status'=> true, 'data' =>  $list];
         return response()->json( $response, 200 );
     }
+    public function listComprobantes(){
+        $list = DB::table('tipodocumento')->where('estado', '1')->get();
+        $response = [ 'status'=> true, 'data' =>  $list];
+        return response()->json( $response, 200 );
+    }
     public function listModelos(){
         $list = DB::table('modelo') ->get();
         $response = [ 'status'=> true, 'data' =>  $list];
@@ -78,27 +83,36 @@ class GeneralController extends Controller
         try {
             $getCliente = DB::table('personas')->where('documento',$documento)->get();
             if(count($getCliente) > 0){
-                $setCliente = $getCliente[0];
+                $dataCliente = $getCliente[0];
+                $dataCliente->nombresCompletos = $dataCliente->nombres .' '. $dataCliente->paterno .' '. $dataCliente->materno;
             }else{
                 $token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.MTYzMA.Z91bggUHVslRNsIRNi38ATsWKVqst0ZLeHjbHc3bN_4';
                 if($tipo == '01'){ 
                     $jsonString = file_get_contents("https://dniruc.apisperu.com/api/v1/ruc/".$documento."?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im9uZWxpbmUuZnJlZWxhbmNlckBnbWFpbC5jb20ifQ.SZjMhu8PV9BNBtbhFFa2VRtZ_UJwB9Z07ZB85WWYRcE");
-                    $dataCliente = (array) json_decode($jsonString,true);
-                    $persona = [ 'documento' => $documento, 'nombres' => $dataCliente['data']->razonSocial ,'paterno' => '', 'materno' => ''];
+                    $setCliente = (array) json_decode($jsonString,true);
                 }else{ 
                     $jsonString = file_get_contents("https://dniruc.apisperu.com/api/v1/dni/".$documento."?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im9uZWxpbmUuZnJlZWxhbmNlckBnbWFpbC5jb20ifQ.SZjMhu8PV9BNBtbhFFa2VRtZ_UJwB9Z07ZB85WWYRcE");
-                    $dataCliente = json_decode($jsonString);
-                    $persona = [ 'documento' => $documento, 'paterno' => $dataCliente['data']['apellidoPaterno'], 'materno' => $dataCliente['data']['apellidoMaterno'], 'nombres' => $dataCliente['data']['nombres'] ];
+                    $setCliente = (array) json_decode($jsonString,true );
                 }
-                $persona_id = DB::table('persona')->insertGetId($persona);
-                $getCliente = ['id' => $persona_id, 'nombres' => $persona['nombres'] .' '. $persona['paterno'] . ''. $persona['materno']];
+                $dataCliente = $this->savePerson($tipo, $documento, $setCliente);
+                $dataCliente['nombresCompletos'] = addslashes($dataCliente['nombres']);
             }
-            $response = [ 'status'=> true, 'data' => $getClient];
+            $response = [ 'status'=> true, 'data' => $dataCliente];
             $codeResponse = 200;
         } catch (\fException $e) {
             $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
             $codeResponse = 500;
         }
         return response()->json( $response, $codeResponse );
+    }
+    public function savePerson($tipo, $documento, $persona){
+        if($tipo == '01'){
+            $setPersona = [ 'documento' => $documento, 'nombres' => $persona['razonSocial'] ,'paterno' => '', 'materno' => ''];
+        }else{
+            $setPersona = [ 'documento' => $documento, 'paterno' => $persona['apellidoPaterno'], 'materno' => $persona['apellidoMaterno'], 'nombres' => $persona['nombres'] ];
+        }
+        $persona_id = DB::table('personas')->insertGetId($setPersona);
+        $getCliente = ['id' => $persona_id,'documento'=>$documento, 'nombres' => $setPersona['nombres'] .' '. $setPersona['paterno'] . ' '. $setPersona['materno']];
+        return $getCliente;
     }
 }
