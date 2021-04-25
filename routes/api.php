@@ -4,6 +4,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\PasajesController;
 use App\Http\Controllers\EnviosController;
+use App\Http\Controllers\ExportController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -50,5 +51,9 @@ Route::group(['prefix' => 'envios'], function () {
     Route::post('listEnvios',[ EnviosController::class,'listEnvios' ]);
     Route::post('saveEnvios',[ EnviosController::class,'saveEnvios' ]);
 });
+Route::group(['prefix' => 'export'], function () {
+    Route::get('comprobante/{id}',[ ExportController::class,'getComprobante' ]);
+});
+
 
 
