@@ -24,11 +24,11 @@
         <thead>
             <tr>
                 <th colspan="5">
-                    <h3 style="font-size:18px;padding-bottom: 12px">Empresa de Transportes - Moquegua</h3>
+                    <h3 style="font-size:14px;padding-bottom: 12px">{{ $data->razonSocial }}</h3>
                 </th>
             </tr>
             <tr>
-                <th colspan="5">RUC : 2060196881</th>
+                <th colspan="5">RUC : {{ $data->RUC }}</th>
             </tr>
             <tr>
                 <th colspan="5">Cal RONDA LA POLVORA 105</th>
@@ -43,7 +43,17 @@
                 <th colspan="5" style="padding-bottom: 12px">Email: serrvo120@gmail.com</th>
             </tr>
             <tr>
-                <th colspan="5" style="border-top: 2px black dashed;padding:12px 0px 12px 0px;font-size:13px;">FACTURA DE VENTA ELECTRONICA</th>
+                <th colspan="5" style="border-top: 2px black dashed;padding:12px 0px 12px 0px;font-size:13px;">
+                @if($data->tipoDocumento_id == '10')
+                    RECIBO
+                @endif
+                @if($data->tipoDocumento_id == '01')
+                    FACTURA DE VENTA ELECTRONICA
+                @endif
+                @if($data->tipoDocumento_id == '03')
+                    BOLETA DE VENTA ELECTRONICA
+                @endif
+                </th>
             </tr>
             <tr>
                 <th colspan="5" style="padding:0px 0px 12px 0px;font-size:12px">{{ $data->serie }}</th>            
@@ -90,14 +100,17 @@
             <tr>
                 <td colspan="5" style="border-top: 1px black dashed;padding:4px 0px 0px 0px"></td>
             </tr>
+           
             <tr>
                 <td colspan="5" style="text-align:right">
-                    <p>Gravada: S/ 76.27</p>
-                    <p>IGV(18.00%): S/ 13.73</p>
-                    <p>Descuento Total: S/ 0.00</p>
-                    <p>Total Pagar: S/ 90.00</p>
+                    <p>Gravada: S/ {{ number_format($data->gravado,2) }}</p>
+                    <p>IGV(18.00%): S/ {{ number_format($data->igv,2) }}</p>
+                    <p>Descuento Total: S/ {{ number_format($data->descuento,2) }}</p>
+                    <p>Total Pagar: S/ {{ number_format($data->monto,2) }}</p>
                 </td>
             </tr>
+            </tr>
+            
             <tr>
                 <td><br><br></td>
             </tr>

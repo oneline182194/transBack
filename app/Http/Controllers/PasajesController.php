@@ -37,6 +37,7 @@ class PasajesController extends Controller
             'serie' => 'SE-02241',
             'monto' => $request->precioTot,
             'personas_id' => $request->personas_id,
+            'empresa_id' => $request->empresa_id,
             'igv' => 0.00,
             'descuento' => 0.00,
             'nota' => $request->nota ?? null,
