@@ -31,19 +31,22 @@
                 <th colspan="5">RUC : {{ $data->RUC }}</th>
             </tr>
             <tr>
-                <th colspan="5">Cal RONDA LA POLVORA 105</th>
+                <th colspan="5">{{ $data->direccion }}</th>
             </tr>
             <tr>
-                <th colspan="5">Arequipa, Arequipa, Arequipa</th>
+                <th colspan="5">Tel: {{ $data->telefono }}</th> 
             </tr>
             <tr>
-                <th colspan="5">Tel: 987301414</th> 
-            </tr>
-            <tr>
-                <th colspan="5" style="padding-bottom: 12px">Email: serrvo120@gmail.com</th>
+                <th colspan="5" style="padding-bottom: 12px">Email: {{ $data->correo }}</th>
             </tr>
             <tr>
                 <th colspan="5" style="border-top: 2px black dashed;padding:12px 0px 12px 0px;font-size:13px;">
+                @if($data->tipoDocumento_id == '20')
+                    RESERVA
+                @endif
+                @if($data->tipoDocumento_id == '30')
+                    PASE
+                @endif
                 @if($data->tipoDocumento_id == '10')
                     RECIBO
                 @endif

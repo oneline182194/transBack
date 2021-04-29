@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\PasajesController;
@@ -23,6 +23,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::group(['prefix' => 'auth'], function () {
+    Route::post('signIn',[ LoginController::class,'signIn' ]);
+});
+
 
 Route::resource('usuarios',UserController::class)->middleware('auth:sanctum');
 
@@ -53,6 +57,8 @@ Route::group(['prefix' => 'envios'], function () {
 });
 Route::group(['prefix' => 'export'], function () {
     Route::get('comprobante/{id}',[ ExportController::class,'getComprobante' ]);
+    Route::get('exportarNomina/{idTurno}',[ ExportController::class,'exportarNomina' ]);
+    
 });
 
 

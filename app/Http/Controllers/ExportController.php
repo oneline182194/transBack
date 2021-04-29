@@ -28,7 +28,7 @@ class ExportController extends Controller
         $comprobante[0]->gravado = round( $gravado, 4, PHP_ROUND_HALF_EVEN);
         $comprobante[0]->igv = $comprobante[0]->monto -  $comprobante[0]->gravado;
 
-        $qrcode = base64_encode(QrCode::format('svg')->size(130)->errorCorrection('H')->generate('string'));
+        $qrcode = base64_encode(QrCode::format('svg')->size(120)->errorCorrection('H')->generate('string'));
         $customPaper = array(0,0,170.07,600);
         $pdf = PDF::loadView('documents.comprobante', ['data'=> $comprobante[0],'qrcode'=> $qrcode])->setPaper($customPaper);
         return $pdf->stream();
@@ -37,5 +37,12 @@ class ExportController extends Controller
             $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
             $codeResponse = 500;
         }
+    }
+    
+    public function exportarNomina($idTurno){
+        $header = DB::select('CALL getTurno('.$idTurno.')');
+        $turnos = DB::select('CALL listaAsientos('. $idTurno .')');
+        $pdf = PDF::loadView('documents.nomina', ['data'=> $header[0],'pasajeros'=> $turnos])->setPaper('A4');
+        return $pdf->stream();
     }
 }
