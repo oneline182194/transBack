@@ -83,7 +83,7 @@
             <tr>
                 <td class="tc">{{ $key + 1 }}</td>
                 <td class="tc">{{ $p->documento }}</td>
-                <td class="tl">{{ $p->cliente }}</td>
+                <td class="tl">{{ $p->cliente }} {{ $p->clienteA }}</td>
                 <td class="tc">{{ $p->asiento }}</td>
                 <td></td>
                 <td></td>

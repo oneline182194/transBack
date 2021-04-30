@@ -45,12 +45,27 @@ class PasajesController extends Controller
         ];
         try{
             DB::beginTransaction(); 
+            if( $request->personas_id == 1 ){
+                $persona = [
+                    'documento'=>$request->numero,
+                    'nombres'=>$request->cliente,
+                    'telefono'=>$request->telefono,
+                ];
+                $getPersona = DB::table('personas')->insertGetId($persona);
+                $comprobante['personas_id'] = $getPersona;
+            }else{
+                $persona = [
+                    'telefono'=>$request->telefono,
+                ];
+                $getPersona = DB::table('personas')->where('id', $request->personas_id)->update($persona);
+                $getPersona = $request->personas_id;
+            }
             $comprobante = DB::table('comprobante')->insertGetId($comprobante);
             foreach ($request->asiento as $key => $value) {
               
                 $pasaje = DB::table('pasajes')->insertGetId([
                     'turnos_id' => $request->turno,
-                    'personas_id' => $request->personas_id,
+                    'personas_id' => $getPersona,
                     'fecha' => $request->fecha,
                     'asiento' => intval($value),
                     'personal_id' => intval($request->personal_id),
@@ -70,7 +85,7 @@ class PasajesController extends Controller
             $response = [ 'status'=> true, 'data' => $pasaje];
             $codeResponse = 200;
 
-        } catch(\Exception $e){
+        } catch(\Exceptions $e){
             DB::rollBack();
             $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
             $codeResponse = 500;
