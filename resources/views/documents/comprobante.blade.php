@@ -59,7 +59,7 @@
                 </th>
             </tr>
             <tr>
-                <th colspan="5" style="padding:0px 0px 12px 0px;font-size:12px">{{ $data->serie }}</th>            
+                <th colspan="5" style="padding:0px 0px 12px 0px;font-size:12px">{{ $data->serie }} - {{  str_pad(( $data->correlativo ), 4, "0", STR_PAD_LEFT) }}</th>            
             </tr>
             <tr>
                 <th colspan="2" style="text-align:right">Fecha Em.: </th>
@@ -76,6 +76,13 @@
                 <th colspan="2" style="text-align:right">DNI:</th>
                 @endif
                 <th colspan="3" style="text-align:left;margin-bottom:15px"> {{ $data->documento }}</th>
+            </tr>
+            <tr >
+                <th colspan="5"> Asiento(s):
+                    @foreach ($data->detalles as $a)
+                        <b style="font-size:14px">{{ $a->asiento }}</b>
+                    @endforeach 
+                </th>
             </tr>
         </thead>
         <tbody>

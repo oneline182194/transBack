@@ -34,10 +34,11 @@ class PasajesController extends Controller
     public function savePasaje(Request $request){
         $comprobante = [
             'fecha' => $request->fecha,
-            'serie' => 'SE-02241',
+            'serie' => $request->serie,
             'monto' => $request->precioTot,
             'personas_id' => $request->personas_id,
             'empresa_id' => $request->empresa_id,
+            'correlativo' => $this->getSerie($request->empresa_id,$request->serie),
             'igv' => 0.00,
             'descuento' => 0.00,
             'nota' => $request->nota ?? null,
@@ -45,6 +46,7 @@ class PasajesController extends Controller
         ];
         try{
             DB::beginTransaction(); 
+
             if( $request->personas_id == 1 ){
                 $persona = [
                     'documento'=>$request->numero,
@@ -102,5 +104,14 @@ class PasajesController extends Controller
             $codeResponse = 500;
         }
         return response()->json( $response, $codeResponse );
+    }
+    public function getSerie($idEmpresa,$serie){
+        $serie = DB::select("select (correlativo + 1) as correlativo from comprobante   where empresa_id = ". $idEmpresa." and  serie = '".$serie."' and estado = 1 order by correlativo desc  limit 1");
+        if(count($serie) > 0){
+            return $serie[0]->correlativo;
+        }else{
+            return 1;
+        }
+        
     }
 }

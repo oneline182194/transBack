@@ -115,4 +115,27 @@ class GeneralController extends Controller
         $getCliente = ['id' => $persona_id,'documento'=>$documento, 'nombres' => $setPersona['nombres'] .' '. $setPersona['paterno'] . ' '. $setPersona['materno']];
         return $getCliente;
     }
+    public function editarEmpresa(Request $request){
+        $data = [
+            'RUC' => $request->RUC,
+            'color' => $request->color,
+            'correo' => $request->correo,
+            'direccion' => $request->direccion,
+            'estado' => $request->estado,
+            'gerente' => $request->gerente,
+            'razonSocial' => $request->razonSocial,
+            'serieBoleta' => $request->serieBoleta,
+            'serieFactura' => $request->serieFactura,
+            'telefono' => $request->telefono
+        ];
+        try {
+            $data = DB::table('empresas')->where('id', $request->id)->update($data);
+            $response = [ 'status'=> true, 'data' => $data];
+            $codeResponse = 200;
+        }catch(\fException $e){
+            $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
+            $codeResponse = 500;
+        }
+        return response()->json( $response, $codeResponse );
+    }
 }

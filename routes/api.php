@@ -30,6 +30,8 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::resource('usuarios',UserController::class)->middleware('auth:sanctum');
 
+Route::get('getSerie/{idEmpresa}/{tipo}',[ PasajesController::class,'getSerie' ]);
+
 Route::group(['prefix' => 'config'], function () {
     Route::get('listEmpresas',[ GeneralController::class,'listEmpresas' ]);
     Route::post('saveEmpresa',[ GeneralController::class,'saveEmpresa' ]); 
@@ -41,6 +43,8 @@ Route::group(['prefix' => 'config'], function () {
     Route::get('listModelos',[ GeneralController::class,'listModelos' ]);
     Route::get('listServicios',[ GeneralController::class,'listServicios' ]);
     Route::get('listComprobantes',[ GeneralController::class,'listComprobantes' ]);
+
+    Route::post('editarEmpresa',[GeneralController::class,'editarEmpresa']);
     
     Route::get('buscarCliente/{tipo}/{documento}',[ GeneralController::class,'buscarCliente' ]);
     
@@ -58,7 +62,6 @@ Route::group(['prefix' => 'envios'], function () {
 Route::group(['prefix' => 'export'], function () {
     Route::get('comprobante/{id}',[ ExportController::class,'getComprobante' ]);
     Route::get('exportarNomina/{idTurno}',[ ExportController::class,'exportarNomina' ]);
-    
 });
 
 
