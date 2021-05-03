@@ -16,7 +16,7 @@ class ApiManagerCurl
                 "ublVersion" => "2.1",
                 "serie" => $invoice->serie,
                 "correlativo" => $invoice->correlativo,
-                "fechaEmision" => date('Y-m-d'),
+                "fechaEmision" => explode(' ', $invoice->fecha)[0],
                 "tipoDoc" => $invoice->tipoDocumento_id,
                 "tipoOperacion" => "0101",
                 "tipoMoneda" => "PEN",
