@@ -112,6 +112,20 @@ class PasajesController extends Controller
         }else{
             return 1;
         }
-        
+    }
+    public function anularPasaje($idComprobante){
+        try{
+            DB::beginTransaction(); 
+            $edit = DB::table('comprobante')->where('id', $idComprobante)->update([ 'estado' => 0]);
+            DB::commit();
+            $response = [ 'status'=> true, 'data' => $edit];
+            $codeResponse = 200;
+
+        } catch(\Exceptions $e){
+            DB::rollBack();
+            $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
+            $codeResponse = 500;
+        }
+        return response()->json( $response, $codeResponse );
     }
 }

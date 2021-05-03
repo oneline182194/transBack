@@ -54,6 +54,8 @@ Route::group(['prefix' => 'pasajes'], function () {
     Route::get('getAsientos/{turnoId}',[ PasajesController::class,'getAsientos' ]); 
     Route::post('saveTurnos',[ PasajesController::class,'saveTurnos' ]); 
     Route::post('savePasaje',[ PasajesController::class,'savePasaje' ]); 
+    Route::get('anularPasaje/{anularPasaje}',[ PasajesController::class,'anularPasaje' ]); 
+    
 });
 Route::group(['prefix' => 'envios'], function () {
     Route::post('listEnvios',[ EnviosController::class,'listEnvios' ]);
