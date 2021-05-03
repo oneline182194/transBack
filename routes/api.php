@@ -41,7 +41,7 @@ Route::group(['prefix' => 'config'], function () {
     Route::get('listConductores',[ GeneralController::class,'listConductores' ]);
     Route::post('saveConductor',[ GeneralController::class,'saveConductor' ]); 
     Route::post('saveVehiculo',[ GeneralController::class,'saveVehiculo' ]); 
-    Route::get('deleteVehiculo/{id}',[ GeneralController::class,'saveVehiculo' ]); 
+    Route::get('deleteVehiculo/{id}',[ GeneralController::class,'deleteVehiculo' ]); 
 
     Route::get('listModelos',[ GeneralController::class,'listModelos' ]);
     Route::get('listServicios',[ GeneralController::class,'listServicios' ]);
