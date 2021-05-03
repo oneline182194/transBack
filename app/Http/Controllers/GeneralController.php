@@ -138,4 +138,19 @@ class GeneralController extends Controller
         }
         return response()->json( $response, $codeResponse );
     }
+    public function deleteVehiculo($id){
+        try{
+            DB::beginTransaction(); 
+            $edit = DB::table('personal')->where('id', $id)->update([ 'estado' => 0]);
+            DB::commit();
+            $response = [ 'status'=> true, 'data' => $edit];
+            $codeResponse = 200;
+
+        } catch(\Exceptions $e){
+            DB::rollBack();
+            $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
+            $codeResponse = 500;
+        }
+        return response()->json( $response, $codeResponse );
+    }
 }
