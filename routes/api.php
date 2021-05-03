@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\ComprobanteController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GeneralController;
@@ -66,5 +68,8 @@ Route::group(['prefix' => 'export'], function () {
     Route::get('exportarNomina/{idTurno}',[ ExportController::class,'exportarNomina' ]);
 });
 
+Route::group(['prefix' => 'comprobantes'], function () {
+    Route::get('enviarSUNAT/{date}',[ ComprobanteController::class, 'enviarSUNAT' ]);
+});
 
 
