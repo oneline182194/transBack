@@ -12,19 +12,20 @@ class EnviosController extends Controller
             $envios = DB::select('CALL listaEnvios(1)');
             $response = [ 'status'=> true, 'data' => $envios];
             $codeResponse = 200;
-        }catch(\Exception $e){
+        }catch(\Exceptions $e){
             $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
             $codeResponse = 500;
         }
         return response()->json( $response, $codeResponse );
     }
     public function saveEnvios(Request $request){
-
+        //return response()->json( $request );
         $comprobante = [
-            'fecha' => date("Y-m-d H:i:s"),
+            'fecha' => date("Y-m-d H:i"),
             'personas_id'=> $request->personas_id,
-            'serie' => 'SE-02241',
-            'monto' => $this->getMonto($request->paquetes),
+            'serie' => $request->serie,
+            'monto' => ( floatval ($request->cancelado) + floatval($request->xcobrar) + floatval($request->taxi) ),
+            'correlativo' => $this->getSerie($request->serie),
             'igv' => 0.00,
             'descuento' => 0.00,
             'nota' => $request->nota ?? null,
@@ -35,34 +36,49 @@ class EnviosController extends Controller
             DB::beginTransaction(); 
 
             $comprobante = DB::table('comprobante')->insertGetId($comprobante);
-            foreach ($request->paquetes as $key => $value) {
-                $detalles = DB::table('detalles')->insertGetId([
-                    'servicios_id' => $request->servicio_id,
+           
+            $detalles = DB::table('detalles')->insertGetId([
+                'servicios_id' => $request->servicio_id,
+                'pasaje_id' => null,
+                'cantidad' => 1,
+                'precio' => ( floatval ($request->cancelado) + floatval($request->xcobrar)  ),
+                'subtotal' => ( floatval ($request->cancelado) + floatval($request->xcobrar)  ),
+                'comprobante_id' => $comprobante
+            ]);
+            if($request->taxi || $request->taxi > 0){
+                $taxi = DB::table('detalles')->insertGetId([
+                    'servicios_id' => 5,
                     'pasaje_id' => null,
                     'cantidad' => 1,
-                    'precio' => $value['precio'],
-                    'subtotal' => $value['precio'],
+                    'precio' => floatval($request->taxi),
+                    'subtotal' => floatval($request->taxi),
                     'comprobante_id' => $comprobante
                 ]);
-                $envios = DB::table('envios')->insertGetId([
-                    'personas_id' => $request->personas_id,
-                    'receptor' => $request->clienteD,
-                    'descripcion' => $value['descripcion'],
-                    'fechaAdqui' => date("Y-m-d H:i:s"),
-                    'fechaEnvio' => null,
-                    'fechaRecepcion' => null,
-                    'estadoEnvio_id' => 1,
-                    'comprobante_id' => $comprobante,
-                    'detalle_id'=>$detalles,
-                    'users_id' => 1
-                ]);
-                
             }
+            $envios = DB::table('envios')->insertGetId([
+                'personas_id' => $request->personas_id,
+                'receptor' => $request->nombresD,
+                'descripcion' => $request->contenido,
+                'fechaAdqui' => date("Y-m-d H:i"),
+                'fechaEnvio' => null,
+                'fechaRecepcion' => null,
+                'estadoEnvio_id' => 1,
+                'comprobante_id' => $comprobante,
+                'detalle_id'=>$detalles,
+                'users_id' => $request->user_id,
+
+                'balija' => $request->balija,
+                'xcobrar' => $request->xcobrar,
+                'taxi' => $request->taxi,
+
+                'ro' => intval($request->ro),
+                'rd' => intval($request->rd),
+            ]);
             DB::commit();
             $response = [ 'status'=> true, 'data' => $envios];
             $codeResponse = 200;
 
-        } catch (\Throwable $th) {
+        } catch (\Exceptions $e) {
             DB::rollBack();
             $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
             $codeResponse = 500;
@@ -75,5 +91,30 @@ class EnviosController extends Controller
             $monto = $p['precio'] + $monto;
         }
         return $monto;
+    }
+    public function getSerie($serie){
+        $serie = DB::select("select (correlativo + 1) as correlativo from comprobante   where empresa_id = 5 and  serie = '".$serie."' and estado = 1 order by correlativo desc  limit 1");
+        if(count($serie) > 0){
+            return $serie[0]->correlativo;
+        }else{
+            return 1;
+        }
+    }
+    public function despachado(Request $request){
+        try{
+            $data = [
+                'estadoEnvio_id' => 2,
+                'fechaEnvio' => $request->fecha.'T'.$request->hora,
+                'placa'=> $request->placa,
+                'personal_id'=> $request->personal_id
+            ];
+            $despachado = DB::table('envios')->where('id',$request->envioId)->update($data);
+            $response = [ 'status'=> true, 'data' => $despachado];
+            $codeResponse = 200;
+        }catch (\Exceptions $e) {
+            $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
+            $codeResponse = 500;
+        }
+        return response()->json( $response, $codeResponse );
     }
 }

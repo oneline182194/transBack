@@ -153,4 +153,30 @@ class GeneralController extends Controller
         }
         return response()->json( $response, $codeResponse );
     }
+    public function getEmpresas(){
+        try{
+            $data = DB::table('empresas')->get();
+            $response = [ 'status'=> true, 'data' => $data];
+            $codeResponse = 200;
+        }catch(\Exceptions $e){
+            $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
+            $codeResponse = 500;
+        }
+    }
+    public function saveServicio(Request $request){
+        try{
+            $data = [
+                'descripcion'=>$request->descripcion,
+                'monto' => $request->pu,
+                'tipoServicio_id' => 6
+            ];
+            $returns = DB::table('servicios')->insertGetId($data);
+            $response = [ 'status'=> true, 'data' => $returns];
+            $codeResponse = 200;
+        }catch(\Exceptions $e){
+            $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
+            $codeResponse = 500;
+        }
+        return response()->json( $response, $codeResponse );
+    }
 }

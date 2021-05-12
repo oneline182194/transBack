@@ -7,6 +7,7 @@ use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\PasajesController;
 use App\Http\Controllers\EnviosController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\ExtraController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -50,6 +51,8 @@ Route::group(['prefix' => 'config'], function () {
     Route::post('editarEmpresa',[GeneralController::class,'editarEmpresa']);
 
     Route::get('buscarCliente/{tipo}/{documento}',[ GeneralController::class,'buscarCliente' ]);
+
+    Route::post('saveServicio',[GeneralController::class,'saveServicio']);
     
 });
 Route::group(['prefix' => 'pasajes'], function () {
@@ -63,6 +66,8 @@ Route::group(['prefix' => 'pasajes'], function () {
 Route::group(['prefix' => 'envios'], function () {
     Route::post('listEnvios',[ EnviosController::class,'listEnvios' ]);
     Route::post('saveEnvios',[ EnviosController::class,'saveEnvios' ]);
+    Route::post('despachado',[ EnviosController::class,'despachado' ]);
+    
 });
 Route::group(['prefix' => 'export'], function () {
     Route::get('comprobante/{id}',[ ExportController::class,'getComprobante' ]);
@@ -71,6 +76,11 @@ Route::group(['prefix' => 'export'], function () {
 
 Route::group(['prefix' => 'comprobantes'], function () {
     Route::get('enviarSUNAT/{date}',[ ComprobanteController::class, 'enviarSUNAT' ]);
+});
+Route::group(['prefix' => 'extra'], function () {
+    Route::post('saveComprobante',[ ExtraController::class,'saveComprobante' ]); 
+    Route::get('listaRegistros/{page}',[ ExtraController::class,'listaRegistros' ]); 
+    
 });
 
 

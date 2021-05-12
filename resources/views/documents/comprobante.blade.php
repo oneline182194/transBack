@@ -63,7 +63,7 @@
             </tr>
             <tr>
                 <th colspan="2" style="text-align:right">Fecha Em.: </th>
-                <th colspan="3" style="text-align:left"> {{ $data->fecha }}</th>
+                <th colspan="3" style="text-align:left"> {{  date("Y-m-d", strtotime($data->fecha))  }}  @if(count($data->detalles) > 0 &&  $data->tipo == 1)  {{   date("g:i a", strtotime( $data->detalles[0]->hora))  }} @endif</th>
             </tr>
             <tr>
                 <th colspan="2" style="text-align:right">Cliente:</th>
@@ -77,6 +77,7 @@
                 @endif
                 <th colspan="3" style="text-align:left;margin-bottom:15px"> {{ $data->documento }}</th>
             </tr>
+            @if( $data->tipo == 1)
             <tr >
                 <th colspan="5"> Asiento(s):
                     @foreach ($data->detalles as $a)
@@ -84,6 +85,7 @@
                     @endforeach 
                 </th>
             </tr>
+            @endif
         </thead>
         <tbody>
             <tr>
@@ -101,7 +103,7 @@
             @foreach ($data->detalles as $det)
             <tr>
                 <td>{{ $det->cantidad }}</td>
-                <td colspan="2"><b>(A: {{ $det->asiento }})</b> {{ $det->descripcion }}</td>
+                <td colspan="2"> {{ $det->descripcion }}</td>
                 <td>{{ $det->precio }}</td>
                 <td>{{ $det->subtotal }}</td>
             </tr>
