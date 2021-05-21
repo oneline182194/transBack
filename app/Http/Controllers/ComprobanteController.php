@@ -14,6 +14,8 @@ class ComprobanteController extends Controller
 {
     public function enviarSUNAT($date, $return = true)
     {
+        set_time_limit(600);
+
         $invoices = Comprobante::with(['empresa' => function ($query) {
             $query->where('estado', 1);
         }, 'detalles.servicio', 'persona'])
