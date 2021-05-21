@@ -23,24 +23,24 @@
     <table >
         <thead>
             <tr>
-                <th colspan="5">
+                <th colspan="8">
                     <h3 style="font-size:14px;padding-bottom: 12px">{{ $data->razonSocial }}</h3>
                 </th>
             </tr>
             <tr>
-                <th colspan="5">RUC : {{ $data->RUC }}</th>
+                <th colspan="8">RUC : {{ $data->RUC }}</th>
             </tr>
             <tr>
-                <th colspan="5">{{ $data->direccion }}</th>
+                <th colspan="8">{{ $data->direccion }}</th>
             </tr>
             <tr>
-                <th colspan="5">Tel: {{ $data->telefono }}</th> 
+                <th colspan="8">Tel: {{ $data->telefono }}</th> 
             </tr>
             <tr>
-                <th colspan="5" style="padding-bottom: 12px">Email: {{ $data->correo }}</th>
+                <th colspan="8" style="padding-bottom: 12px">Email: {{ $data->correo }}</th>
             </tr>
             <tr>
-                <th colspan="5" style="border-top: 2px black dashed;padding:12px 0px 12px 0px;font-size:13px;">
+                <th colspan="8" style="border-top: 2px black dashed;padding:12px 0px 12px 0px;font-size:13px;">
                 @if($data->tipoDocumento_id == '20')
                     RESERVA
                 @endif
@@ -59,15 +59,15 @@
                 </th>
             </tr>
             <tr>
-                <th colspan="5" style="padding:0px 0px 12px 0px;font-size:12px">{{ $data->serie }} - {{  str_pad(( $data->correlativo ), 4, "0", STR_PAD_LEFT) }}</th>            
+                <th colspan="8" style="padding:0px 0px 12px 0px;font-size:12px">{{ $data->serie }} - {{  str_pad(( $data->correlativo ), 4, "0", STR_PAD_LEFT) }}</th>            
             </tr>
             <tr>
-                <th colspan="2" style="text-align:right">Fecha Em.: </th>
-                <th colspan="3" style="text-align:left"> {{  date("Y-m-d", strtotime($data->fecha))  }}  @if(count($data->detalles) > 0 &&  $data->tipo == 1)  {{   date("g:i a", strtotime( $data->detalles[0]->hora))  }} @endif</th>
+                <th colspan="2" style="text-align:right">Fecha: </th>
+                <th colspan="6" style="text-align:left"> {{  date("Y-m-d", strtotime($data->fecha))  }}  @if(count($data->detalles) > 0 &&  $data->tipo == 1)  {{   date("g:i a", strtotime( $data->detalles[0]->hora))  }} @endif</th>
             </tr>
             <tr>
                 <th colspan="2" style="text-align:right">Cliente:</th>
-                <th colspan="3" style="text-align:left"> {{ $data->nombres }} {{ $data->paterno }}</th>
+                <th colspan="6" style="text-align:left"> {{ $data->nombres }} {{ $data->paterno }}</th>
             </tr>
             <tr >
                 @if($data->tipoDocumento_id == '01')
@@ -75,11 +75,15 @@
                 @else
                 <th colspan="2" style="text-align:right">DNI:</th>
                 @endif
-                <th colspan="3" style="text-align:left;margin-bottom:15px"> {{ $data->documento }}</th>
+                <th colspan="6" style="text-align:left;margin-bottom:15px"> {{ $data->documento }}</th>
+            </tr>
+            <tr >
+                <th colspan="2" style="text-align:right">Direc.:</th>
+                <th colspan="6" style="text-align:left;margin-bottom:15px"> {{ $data->dir }}</th>
             </tr>
             @if( $data->tipo == 1)
             <tr >
-                <th colspan="5"> Asiento(s):
+                <th colspan="8"> Asiento(s):
                     @foreach ($data->detalles as $a)
                         <b style="font-size:14px">{{ $a->asiento }}</b>
                     @endforeach 
@@ -89,32 +93,32 @@
         </thead>
         <tbody>
             <tr>
-                <td colspan="5" style="border-bottom: 1px black dashed;margin:8px 0px 0px 0px"><br></td>
+                <td colspan="8" style="border-bottom: 1px black dashed;margin:8px 0px 0px 0px"><br></td>
             </tr>
             <tr>
                 <td width="20">Cant.</td>
-                <td colspan="2">Descripcion</td>
+                <td colspan="5">Descripcion</td>
                 <td width="25">Prec.</td>
                 <td width="25">Imp.</td>
             </tr>
             <tr>
-                <td colspan="5" style="border-top: 1px black dashed;padding:4px 0px 0px 0px"></td>
+                <td colspan="8" style="border-top: 1px black dashed;padding:4px 0px 0px 0px"></td>
             </tr>
             @foreach ($data->detalles as $det)
             <tr>
-                <td>{{ $det->cantidad }}</td>
-                <td colspan="2"> {{ $det->descripcion }}</td>
-                <td>{{ $det->precio }}</td>
-                <td>{{ $det->subtotal }}</td>
+                <td style="text-align:center">{{ $det->cantidad }}</td>
+                <td colspan="5"> {{ $det->descripcion }}</td>
+                <td style="text-align:center">{{ $det->precio }}</td>
+                <td style="text-align:center">{{ $det->subtotal }}</td>
             </tr>
             @endforeach
             
             <tr>
-                <td colspan="5" style="border-top: 1px black dashed;padding:4px 0px 0px 0px"></td>
+                <td colspan="8" style="border-top: 1px black dashed;padding:4px 0px 0px 0px"></td>
             </tr>
            
             <tr>
-                <td colspan="5" style="text-align:right">
+                <td colspan="8" style="text-align:right">
                     <p>Gravada: S/ {{ number_format($data->gravado,2) }}</p>
                     <p>IGV(18.00%): S/ {{ number_format($data->igv,2) }}</p>
                     <p>Descuento Total: S/ {{ number_format($data->descuento,2) }}</p>
@@ -127,12 +131,12 @@
                 <td><br><br></td>
             </tr>
             <tr>
-                <td colspan="5" style="text-align:center;">
+                <td colspan="8" style="text-align:center;">
                     <img src="data:image/png;base64, {!! $qrcode !!}">
                 </td>
             </tr>
             <tr>
-                <td colspan="5" style="text-align:center;padding-top:12px">
+                <td colspan="8" style="text-align:center;padding-top:12px">
                     <b>Gracias por su preferencia.</b>
                 </td>
             </tr>

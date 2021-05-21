@@ -107,12 +107,12 @@ class GeneralController extends Controller
     }
     public function savePerson($tipo, $documento, $persona){
         if($tipo == '01'){
-            $setPersona = [ 'documento' => $documento, 'nombres' => $persona['razonSocial'] ,'paterno' => '', 'materno' => ''];
+            $setPersona = [ 'documento' => $documento, 'nombres' => addslashes($persona['razonSocial']) ,'paterno' => '', 'materno' => '', 'direccion' => addslashes($persona['direccion'])];
         }else{
-            $setPersona = [ 'documento' => $documento, 'paterno' => $persona['apellidoPaterno'], 'materno' => $persona['apellidoMaterno'], 'nombres' => $persona['nombres'] ];
+            $setPersona = [ 'documento' => $documento, 'paterno' => $persona['apellidoPaterno'], 'materno' => $persona['apellidoMaterno'], 'nombres' => $persona['nombres'], 'direccion' => '' ];
         }
         $persona_id = DB::table('personas')->insertGetId($setPersona);
-        $getCliente = ['id' => $persona_id,'documento'=>$documento, 'nombres' => $setPersona['nombres'] .' '. $setPersona['paterno'] . ' '. $setPersona['materno']];
+        $getCliente = ['id' => $persona_id,'documento'=>$documento, 'nombres' => $setPersona['nombres'] .' '. $setPersona['paterno'] . ' '. $setPersona['materno'], 'direccion'=> $setPersona['direccion'] ?? null ];
         return $getCliente;
     }
     public function editarEmpresa(Request $request){

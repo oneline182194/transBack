@@ -57,7 +57,8 @@ class PasajesController extends Controller
                 $comprobante['personas_id'] = $getPersona;
             }else{
                 $persona = [
-                    'telefono'=>$request->telefono,
+                    'telefono'=>$request->telefono ?? null,
+                    'direccion' => $request->direccion ?? null,
                 ];
                 $getPersona = DB::table('personas')->where('id', $request->personas_id)->update($persona);
                 $getPersona = $request->personas_id;

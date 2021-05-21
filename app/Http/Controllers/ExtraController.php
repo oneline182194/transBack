@@ -26,6 +26,7 @@ class ExtraController extends Controller
         try{
             DB::beginTransaction(); 
             $comprobante_id = DB::table('comprobante')->insertGetId($comprobante);
+            $person = DB::table('personas')->where('id',$request->personas_id)->update([ 'direccion' => $request->direccion ]);
             foreach($request->detalles as $d){
                 $detalle = DB::table('detalles')->insertGetId([
                     'servicios_id' => $d['id'],
@@ -57,7 +58,7 @@ class ExtraController extends Controller
     }
     public function listaRegistros($page){
         try{
-            $comprobantes = DB::table('comprobante')->where('tipo',3)->where('estado',1)->join('personas as p','p.id','=','comprobante.personas_id')->orderBy('id', 'desc')->select('comprobante.*','p.documento','p.nombres','p.paterno')->get();
+            $comprobantes = DB::table('comprobante')->where('tipo',3)->join('personas as p','p.id','=','comprobante.personas_id')->orderBy('id', 'desc')->select('comprobante.*','p.documento','p.nombres','p.paterno')->get();
             $response = [ 'status'=> true, 'data' => $comprobantes];
             $codeResponse = 200;
         }catch(Exceptions $e){

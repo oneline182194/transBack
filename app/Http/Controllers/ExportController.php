@@ -13,7 +13,7 @@ class ExportController extends Controller
 
         try{
 
-        $comprobante = DB::table('comprobante')->where('comprobante.id',$id)->join('personas as pe','pe.id','=','comprobante.personas_id')->join('empresas as em','em.id','=','comprobante.empresa_id')->get();
+        $comprobante = DB::table('comprobante')->where('comprobante.id',$id)->join('personas as pe','pe.id','=','comprobante.personas_id')->join('empresas as em','em.id','=','comprobante.empresa_id')->select('comprobante.*','pe.*','em.*','pe.direccion as dir')->get();
         if($comprobante[0]->tipo == 1){
             $comprobante[0]->detalles = DB::table('detalles as d')->where('d.comprobante_id',$id)
                                                                     ->join('servicios as s','s.id','=','d.servicios_id')

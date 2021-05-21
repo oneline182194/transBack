@@ -67,7 +67,10 @@ Route::group(['prefix' => 'envios'], function () {
     Route::post('listEnvios',[ EnviosController::class,'listEnvios' ]);
     Route::post('saveEnvios',[ EnviosController::class,'saveEnvios' ]);
     Route::post('despachado',[ EnviosController::class,'despachado' ]);
-    
+
+    Route::post('listEntregas',[ EnviosController::class,'listEntregas' ]);
+    Route::get('recibirEnvio/{idEnvio}',[ EnviosController::class,'recibirEnvio' ]); 
+    Route::get('entregarEnvio/{idEnvio}',[ EnviosController::class,'entregarEnvio' ]); 
 });
 Route::group(['prefix' => 'export'], function () {
     Route::get('comprobante/{id}',[ ExportController::class,'getComprobante' ]);

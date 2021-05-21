@@ -4,12 +4,32 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use Hashids\Hashids;
 
 class EnviosController extends Controller
 {
     public function listEnvios(Request $request){
         try{
-            $envios = DB::select('CALL listaEnvios(1)');
+            $envios = DB::select("CALL listaEnvios($request->region, $request->page,$request->size)");
+            $hashids = new Hashids('',4,'1234567890ABCDEFGHIJKLMNOPQRSTU');
+            foreach ($envios as $key => $row) {
+                $envios[$key]->code = $hashids->encode($row->envioId);
+            }
+            $response = [ 'status'=> true, 'data' => $envios];
+            $codeResponse = 200;
+        }catch(\Exceptions $e){
+            $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
+            $codeResponse = 500;
+        }
+        return response()->json( $response, $codeResponse );
+    }
+    public function listEntregas(Request $request){
+        try{
+            $envios = DB::select("CALL listaEntrega($request->region, $request->page,$request->size)");
+            $hashids = new Hashids('',4,'1234567890ABCDEFGHIJKLMNOPQRSTU');
+            foreach ($envios as $key => $row) {
+                $envios[$key]->code = $hashids->encode($row->envioId);
+            }
             $response = [ 'status'=> true, 'data' => $envios];
             $codeResponse = 200;
         }catch(\Exceptions $e){
@@ -59,6 +79,7 @@ class EnviosController extends Controller
                 'personas_id' => $request->personas_id,
                 'receptor' => $request->nombresD,
                 'descripcion' => $request->contenido,
+                'destino' => $request->direccionD,
                 'fechaAdqui' => date("Y-m-d H:i"),
                 'fechaEnvio' => null,
                 'fechaRecepcion' => null,
@@ -110,6 +131,36 @@ class EnviosController extends Controller
             ];
             $despachado = DB::table('envios')->where('id',$request->envioId)->update($data);
             $response = [ 'status'=> true, 'data' => $despachado];
+            $codeResponse = 200;
+        }catch (\Exceptions $e) {
+            $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
+            $codeResponse = 500;
+        }
+        return response()->json( $response, $codeResponse );
+    }
+    public function recibirEnvio($idEnvio){
+        try{
+            $data = [
+                'estadoEnvio_id' => 3,
+                'fechaRecepcion' => date("Y-m-d H:i:s")
+            ];
+            $despachado = DB::table('envios')->where('id',$idEnvio)->update($data);
+            $response = [ 'status'=> true, 'data' => $despachado ];
+            $codeResponse = 200;
+        }catch (\Exceptions $e) {
+            $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
+            $codeResponse = 500;
+        }
+        return response()->json( $response, $codeResponse );
+    }
+    public function entregarEnvio($idEnvio){
+        try{
+            $data = [
+                'estadoEnvio_id' => 4,
+                'fechaEntrega' => date("Y-m-d H:i:s")
+            ];
+            $despachado = DB::table('envios')->where('id',$idEnvio)->update($data);
+            $response = [ 'status'=> true, 'data' => $despachado ];
             $codeResponse = 200;
         }catch (\Exceptions $e) {
             $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
