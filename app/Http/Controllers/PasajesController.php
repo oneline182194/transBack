@@ -42,7 +42,8 @@ class PasajesController extends Controller
             'igv' => 0.00,
             'descuento' => 0.00,
             'nota' => $request->nota ?? null,
-            'tipoDocumento_id' => $request->comprobante??null
+            'tipoDocumento_id' => $request->comprobante??null,
+            'user_id' =>$request->user_id
         ];
         try{
             DB::beginTransaction(); 

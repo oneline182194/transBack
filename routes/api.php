@@ -8,6 +8,7 @@ use App\Http\Controllers\PasajesController;
 use App\Http\Controllers\EnviosController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ExtraController;
+use App\Http\Controllers\ReportesController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::group(['prefix' => 'auth'], function () {
     Route::post('signIn',[ LoginController::class,'signIn' ]);
+    Route::post('generateUserConduc',[ LoginController::class,'generateUserConduc' ]);
+    Route::post('changePassword',[ LoginController::class,'changePassword' ]);
 });
 
 
@@ -82,7 +85,10 @@ Route::group(['prefix' => 'comprobantes'], function () {
 });
 Route::group(['prefix' => 'extra'], function () {
     Route::post('saveComprobante',[ ExtraController::class,'saveComprobante' ]); 
-    Route::get('listaRegistros/{page}',[ ExtraController::class,'listaRegistros' ]); 
+    Route::post('listaRegistros',[ ExtraController::class,'listaRegistros' ]); 
+});
+Route::group(['prefix' => 'reportes'], function () {
+    Route::post('reporteDocumentos',[ ReportesController::class,'reporteDocumentos' ]);
     
 });
 

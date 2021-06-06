@@ -15,13 +15,14 @@ class ExtraController extends Controller
             'monto' => $request->total,
             'igv' => 0,
             'descuento' => 0,
-            'nota' => '-',
+            'nota' => $request->nota,
             'estado' => 1,
             'tipo' => 3,
             'tipoDocumento_id' => $request->comprobante,
             'empresa_id' => $request->empresa_id,
             'send' => 0,
             'correlativo' => $this->getSerie($request->empresa_id,$request->serie),
+            'user_id' =>$request->user_id
         ];
         try{
             DB::beginTransaction(); 
@@ -56,9 +57,9 @@ class ExtraController extends Controller
             return 1;
         }
     }
-    public function listaRegistros($page){
+    public function listaRegistros(Request $request){
         try{
-            $comprobantes = DB::table('comprobante')->where('tipo',3)->join('personas as p','p.id','=','comprobante.personas_id')->orderBy('id', 'desc')->select('comprobante.*','p.documento','p.nombres','p.paterno')->get();
+            $comprobantes = DB::select("CALL misFacturas($request->user_id,$request->page,$request->size)");
             $response = [ 'status'=> true, 'data' => $comprobantes];
             $codeResponse = 200;
         }catch(Exceptions $e){

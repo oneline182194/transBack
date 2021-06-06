@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nomina</title>
     <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+        }
         .tc{
             text-align: center;
         }
@@ -32,11 +35,11 @@
 </head> 
 <body>
     <h1 class="tc">{{ $data->razonSocial }}</h1>
-    <h4 class="tc">{{ $data->RUC }}</h4>
-    <p class="tc">
+    <h4 class="tc">RUC:  {{ $data->RUC }}</h4>
+    <p class="tc" style="font-size:12px">
         <strong >{{ $data->direccion }}</strong><br>
-        <strong>{{ $data->telefono }}</strong><br>
-        <strong>{{ $data->correo }}</strong><br>
+        <strong>Telefono: {{ $data->telefono }}</strong><br>
+        <strong>Correo: {{ $data->correo }}</strong><br>
     </p>
     
     <table class="table">
@@ -64,6 +67,10 @@
                 <td>{{ $data->anio }}</td>
                 <th>Color</th>
                 <td>{{ $data->color }}</td>
+            </tr>
+            <tr>
+                <th>Salida</th>
+                <th colspan="3" style="text-align:left">Dia : {{ $data->dia }} &nbsp;&nbsp;&nbsp;   Hora: {{ $data->hora }}</th>
             </tr>
         </thead>
     </table>

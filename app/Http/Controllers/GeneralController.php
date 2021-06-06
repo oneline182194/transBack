@@ -28,9 +28,13 @@ class GeneralController extends Controller
     }
     public function saveConductor(Request $request){
         try {
-            $data = DB::table('personas')->insertGetId(['documento' => $request->dni,'paterno' => $request->paterno,'materno' => $request->materno,'nombres' => $request->nombres,'sexo'=> $request->sexo]);
-            $personal = DB::table('personal')->insertGetId(['estado' => 1,'personas_id' => $data]);
-            $response = [ 'status'=> true, 'data' =>  $personal];
+            if($request->id){
+                $data = DB::table('personas')->where('id',$request->id)->update(['documento' => $request->dni,'paterno' => $request->paterno,'materno' => $request->materno,'nombres' => $request->nombres,'sexo'=> $request->sexo]);
+            }else{
+                $data = DB::table('personas')->insertGetId(['documento' => $request->dni,'paterno' => $request->paterno,'materno' => $request->materno,'nombres' => $request->nombres,'sexo'=> $request->sexo]);
+                $personal = DB::table('personal')->insertGetId(['estado' => 1,'personas_id' => $data]);
+            }
+            $response = [ 'status'=> true, 'data' =>  $data];
             $codeResponse = 200;
         } catch (\fException $e) {
 

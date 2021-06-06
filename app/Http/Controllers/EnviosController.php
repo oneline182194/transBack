@@ -50,7 +50,8 @@ class EnviosController extends Controller
             'descuento' => 0.00,
             'nota' => $request->nota ?? null,
             'tipo' => 2,
-            'tipoDocumento_id' => $request->comprobante??null
+            'tipoDocumento_id' => $request->comprobante??null,
+            'user_id' =>$request->user_id
         ];
         try {
             DB::beginTransaction(); 

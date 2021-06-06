@@ -10,7 +10,7 @@
        *{ 
            margin:0px;
            padding:0px;
-           font-size:10px;
+           font-size:9px;
            font-family: 'Lucida', sans-serif;;
         }
        table{
@@ -19,28 +19,28 @@
        }
     </style>
 </head>
-<body>
-    <table >
+<body style="padding:0px 12px">
+    <table>
         <thead>
             <tr>
                 <th colspan="8">
-                    <h3 style="font-size:14px;padding-bottom: 12px">{{ $data->razonSocial }}</h3>
+                    <h3 style="font-size:12px;padding-bottom: 8px">{{ $data->razonSocial }}</h3>
                 </th>
             </tr>
             <tr>
-                <th colspan="8">RUC : {{ $data->RUC }}</th>
+                <th colspan="8" style="font-size:9px">RUC : {{ $data->RUC }}</th>
             </tr>
             <tr>
-                <th colspan="8">{{ $data->direccion }}</th>
+                <th colspan="8" style="font-size:9px">{{ $data->direccion }}</th>
             </tr>
             <tr>
-                <th colspan="8">Tel: {{ $data->telefono }}</th> 
+                <th colspan="8" style="font-size:9px">Tel: {{ $data->telefono }}</th> 
             </tr>
             <tr>
-                <th colspan="8" style="padding-bottom: 12px">Email: {{ $data->correo }}</th>
+                <th colspan="8" style="padding-bottom: 6px">Email: {{ $data->correo }}</th>
             </tr>
             <tr>
-                <th colspan="8" style="border-top: 2px black dashed;padding:12px 0px 12px 0px;font-size:13px;">
+                <th colspan="8" style="border-top: 2px black dashed;padding:6px 0px 0px 0px;font-size:13px;">
                 @if($data->tipoDocumento_id == '20')
                     RESERVA
                 @endif
@@ -59,11 +59,11 @@
                 </th>
             </tr>
             <tr>
-                <th colspan="8" style="padding:0px 0px 12px 0px;font-size:12px">{{ $data->serie }} - {{  str_pad(( $data->correlativo ), 4, "0", STR_PAD_LEFT) }}</th>            
+                <th colspan="8" style="padding:0px 0px 4px 0px;font-size:11px">{{ $data->serie }} - {{  str_pad(( $data->correlativo ), 4, "0", STR_PAD_LEFT) }}</th>            
             </tr>
             <tr>
                 <th colspan="2" style="text-align:right">Fecha: </th>
-                <th colspan="6" style="text-align:left"> {{  date("Y-m-d", strtotime($data->fecha))  }}  @if(count($data->detalles) > 0 &&  $data->tipo == 1)  {{   date("g:i a", strtotime( $data->detalles[0]->hora))  }} @endif</th>
+                <th colspan="6" style="text-align:left"> {{  date("Y-m-d", strtotime($data->fecha))  }}  @if(count($data->detalles) > 0 &&  $data->tipo == 1)  {{   date("g:i a", strtotime( $data->detalles[0]->hora))  }} @else {{ date("h:m a", strtotime($data->fecha)) }} @endif</th>
             </tr>
             <tr>
                 <th colspan="2" style="text-align:right">Cliente:</th>
@@ -90,6 +90,12 @@
                 </th>
             </tr>
             @endif
+           
+            <tr >
+                <th colspan="8" align="left"> &nbsp;&nbsp;Atendido:
+                    <b style="font-size:8px">{{ $data->user }}</b>
+                </th>
+            </tr>
         </thead>
         <tbody>
             <tr>
@@ -132,7 +138,7 @@
             </tr>
             <tr>
                 <td colspan="8" style="text-align:center;">
-                    <img src="data:image/png;base64, {!! $qrcode !!}">
+                    <img width="50" src="data:image/png;base64, {!! $qrcode !!}">
                 </td>
             </tr>
             <tr>
