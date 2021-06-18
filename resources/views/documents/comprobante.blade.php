@@ -99,6 +99,11 @@
                     <b style="font-size:8px">{{ $data->user }}</b>
                 </th>
             </tr>
+            <tr >
+                <th colspan="8" align="left"> &nbsp;&nbsp;Nota:
+                    <b style="font-size:8px">{{ $data->nota }}</b>
+                </th>
+            </tr>
 
             @if( $data->tipo == 2)
             <tr>
