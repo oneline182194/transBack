@@ -41,7 +41,8 @@ Route::get('getSerie/{idEmpresa}/{tipo}',[ PasajesController::class,'getSerie' ]
 Route::group(['prefix' => 'config'], function () {
     Route::get('listEmpresas',[ GeneralController::class,'listEmpresas' ]);
     Route::post('saveEmpresa',[ GeneralController::class,'saveEmpresa' ]); 
-
+    Route::get('listUsers',[ GeneralController::class,'listUsers' ]);
+    
     Route::get('listConductores',[ GeneralController::class,'listConductores' ]);
     Route::post('saveConductor',[ GeneralController::class,'saveConductor' ]); 
     Route::post('saveVehiculo',[ GeneralController::class,'saveVehiculo' ]); 
@@ -72,16 +73,19 @@ Route::group(['prefix' => 'envios'], function () {
     Route::post('despachado',[ EnviosController::class,'despachado' ]);
 
     Route::post('listEntregas',[ EnviosController::class,'listEntregas' ]);
-    Route::get('recibirEnvio/{idEnvio}',[ EnviosController::class,'recibirEnvio' ]); 
-    Route::get('entregarEnvio/{idEnvio}',[ EnviosController::class,'entregarEnvio' ]); 
-});
+    Route::post('recibirEnvio',[ EnviosController::class,'recibirEnvio' ]); 
+    Route::post('entregarEnvio',[ EnviosController::class,'entregarEnvio' ]); 
+    Route::post('editarDestinatario',[ EnviosController::class,'editarDestinatario' ]);
+}); 
 Route::group(['prefix' => 'export'], function () {
     Route::get('comprobante/{id}',[ ExportController::class,'getComprobante' ]);
+    Route::get('getComprobanteA4/{id}',[ ExportController::class,'getComprobanteA4' ]);
     Route::get('exportarNomina/{idTurno}',[ ExportController::class,'exportarNomina' ]);
 });
 
 Route::group(['prefix' => 'comprobantes'], function () {
     Route::get('enviarSUNAT/{date}',[ ComprobanteController::class, 'enviarSUNAT' ]);
+    Route::get('AnularComprobanteSunat/{date}',[ ExtraController::class, 'AnularComprobanteSunat' ]);
 });
 Route::group(['prefix' => 'extra'], function () {
     Route::post('saveComprobante',[ ExtraController::class,'saveComprobante' ]); 
@@ -89,7 +93,9 @@ Route::group(['prefix' => 'extra'], function () {
 });
 Route::group(['prefix' => 'reportes'], function () {
     Route::post('reporteDocumentos',[ ReportesController::class,'reporteDocumentos' ]);
-    
+    Route::post('reporteResumen',[ ReportesController::class,'reporteResumen' ]);
+    Route::post('reporteBalance',[ ReportesController::class,'reporteBalance' ]);
+    Route::post('reporteDiario',[ ReportesController::class,'reporteDiario' ]);
 });
 
 

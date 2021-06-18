@@ -68,4 +68,50 @@ class ExtraController extends Controller
         }
         return response()->json( $response, $codeResponse );
     }
+    public function AnularComprobanteSunat($idComprobante){
+        try{
+            $comprobante = DB::table('comprobante')->where('id',$idComprobante)->first();
+            $comprobante->detalles = DB::table('detalles')->where('comprobante_id',$idComprobante)->get();
+            $comprobante->fecha = date("Y-m-d H:i:s"); 
+            if($comprobante->tipoDocumento_id == '01'){
+                $comprobante->serie = 'FNC1';
+                $comprobante->tipoDocumento_id = '07';
+                $comprobante->correlativo =$this->getSerie($comprobante->empresa_id,'FNC1');
+            }
+            if($comprobante->tipoDocumento_id == '03'){
+                $comprobante->serie = 'BNC1';
+                $comprobante->tipoDocumento_id = '07';
+                $comprobante->correlativo = $this->getSerie($comprobante->empresa_id,'BNC1');
+            }
+            DB::beginTransaction();
+            $rest = DB::table('comprobante')->insertGetId($comprobante);
+            foreach ($comprobante->detalles as $key => $value) {
+                $detalles = DB::table('detalles')->insertGetId($value);
+            }
+            DB::commit();
+            $response = [ 'status'=> true, 'data' => $rest];
+            $codeResponse = 200;
+        }catch(Exceptions $e){
+            DB::rollBack();
+            $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
+            $codeResponse = 500;
+        }
+        return response()->json( $response, $codeResponse );
+    }
+    public function getSerieFactura($idEmpresa,$serie){
+        $serie = DB::select("select (correlativo + 1) as correlativo from comprobante   where empresa_id = ". $idEmpresa." and  serie = '".$serie."' and estado = 1 order by correlativo desc  limit 1");
+        if(count($serie) > 0){
+            return $serie[0]->correlativo;
+        }else{
+            return 1;
+        }
+    }
+    public function getSerieBoleta($idEmpresa,$serie){
+        $serie = DB::select("select (correlativo + 1) as correlativo from comprobante   where empresa_id = ". $idEmpresa." and  serie = '".$serie."' and estado = 1 order by correlativo desc  limit 1");
+        if(count($serie) > 0){
+            return $serie[0]->correlativo;
+        }else{
+            return 1;
+        }
+    }
 }

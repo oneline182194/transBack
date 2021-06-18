@@ -26,6 +26,11 @@ class GeneralController extends Controller
         $response = [ 'status'=> true, 'data' =>  $list];
         return response()->json( $response, 200 );
     }
+    public function listUsers(){
+        $list = DB::table('users')->get();
+        $response = [ 'status'=> true, 'data' =>  $list];
+        return response()->json( $response, 200 );
+    }
     public function saveConductor(Request $request){
         try {
             if($request->id){

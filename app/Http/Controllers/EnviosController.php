@@ -10,12 +10,21 @@ class EnviosController extends Controller
 {
     public function listEnvios(Request $request){
         try{
-            $envios = DB::select("CALL listaEnvios($request->region, $request->page,$request->size)");
+            $search = '';
+            $data = $request->all();
             $hashids = new Hashids('',4,'1234567890ABCDEFGHIJKLMNOPQRSTU');
+            if($request->parametro == 'e.id' && $request->buscar){
+                $search = $hashids->decode($request->buscar);
+                $search = $search[0];
+            }else{
+                $search = $request->buscar;
+            }
+            $envios = DB::select("CALL getEnvios($request->estado, $request->servicio,'$request->parametro','$search',$request->page,$request->size)");
+            $totalRegistros = DB::select("CALL getEnviosRes($request->estado, $request->servicio,'$request->parametro','$search',$request->page,$request->size)");
             foreach ($envios as $key => $row) {
                 $envios[$key]->code = $hashids->encode($row->envioId);
             }
-            $response = [ 'status'=> true, 'data' => $envios];
+            $response = [ 'status'=> true, 'data' => $envios, 'total'=> $totalRegistros[0]->totalRegistros ];
             $codeResponse = 200;
         }catch(\Exceptions $e){
             $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
@@ -44,6 +53,7 @@ class EnviosController extends Controller
             'fecha' => date("Y-m-d H:i"),
             'personas_id'=> $request->personas_id,
             'serie' => $request->serie,
+            'empresa_id' => $request->empresa_id,
             'monto' => ( floatval ($request->cancelado) + floatval($request->xcobrar) + floatval($request->taxi) ),
             'correlativo' => $this->getSerie($request->serie),
             'igv' => 0.00,
@@ -139,13 +149,14 @@ class EnviosController extends Controller
         }
         return response()->json( $response, $codeResponse );
     }
-    public function recibirEnvio($idEnvio){
+    public function recibirEnvio(Request $request){
         try{
             $data = [
                 'estadoEnvio_id' => 3,
+                'user_rep' => $request->username,
                 'fechaRecepcion' => date("Y-m-d H:i:s")
             ];
-            $despachado = DB::table('envios')->where('id',$idEnvio)->update($data);
+            $despachado = DB::table('envios')->where('id',$request->idEnvio)->update($data);
             $response = [ 'status'=> true, 'data' => $despachado ];
             $codeResponse = 200;
         }catch (\Exceptions $e) {
@@ -154,13 +165,14 @@ class EnviosController extends Controller
         }
         return response()->json( $response, $codeResponse );
     }
-    public function entregarEnvio($idEnvio){
+    public function entregarEnvio(Request $request){
         try{
             $data = [
                 'estadoEnvio_id' => 4,
+                'user_ent' => $request->username,
                 'fechaEntrega' => date("Y-m-d H:i:s")
             ];
-            $despachado = DB::table('envios')->where('id',$idEnvio)->update($data);
+            $despachado = DB::table('envios')->where('id',$request->idEnvio)->update($data);
             $response = [ 'status'=> true, 'data' => $despachado ];
             $codeResponse = 200;
         }catch (\Exceptions $e) {
@@ -168,5 +180,21 @@ class EnviosController extends Controller
             $codeResponse = 500;
         }
         return response()->json( $response, $codeResponse );
+    }
+    function editarDestinatario(Request $request){
+        try{
+            $data = [
+                'ddni' => $request->ddni,
+                'receptor' => $request->receptor,
+                'dtel' => $request->dtel,
+
+            ];
+            $editart = DB::table('envios')->where('id',$request->envioId)->update($data);
+            $response = [ 'status'=> true, 'data' => $editart ];
+            $codeResponse = 200;
+        }catch(\Exceptions $e){
+            $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
+            $codeResponse = 500;
+        }
     }
 }

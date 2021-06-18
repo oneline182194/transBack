@@ -15,12 +15,14 @@ class ComprobanteController extends Controller
     public function enviarSUNAT($date, $return = true)
     {
         set_time_limit(600);
+        
+        $fechaInicio = date("Y-m-d",strtotime($date." - 7 days")); 
 
         $invoices = Comprobante::with(['empresa' => function ($query) {
             $query->where('estado', 1);
         }, 'detalles.servicio', 'persona'])
         ->whereIn('tipoDocumento_id', ['01', '03'])
-        ->whereBetween('fecha', [$date . ' 00:00:00', $date . ' 23:59:59'])
+        ->whereBetween('fecha', [$fechaInicio . ' 00:00:00', $date . ' 23:59:59'])
         ->whereBetween('tipoDocumento_id', ['01', '03'])
         ->where('send', 0)
         ->where('estado', 1)
