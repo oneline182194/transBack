@@ -6,7 +6,7 @@ class ApiManagerCurl
 {
     private static function formatData($invoice)
     {
-        if($invoice->tipoDocumento_id === "01" || $invoice->tipoDocumento_id === "03"){
+        if($invoice->tipoDocumento_id === "01" || $invoice->tipoDocumento_id === "03" || $invoice->tipoDocumento_id === "07"){
 
             $cliTipoDoc = ( strlen($invoice->persona->documento) >= 11 ) ? "6" : "1"; 
 
@@ -44,6 +44,12 @@ class ApiManagerCurl
                 "subTotal" => $invoice->monto,
                 "mtoImpVenta" => $invoice->monto,
             ];
+
+            if ($invoice->tipoDocumento_id === "07") {
+                $array['codMotivo'] = '01';
+                $array['desMotivo'] = 'Anulación de Comprobante';
+                $array['numDocfectado'] = $invoice->numDocfectado;
+            }
             
             $detalles = [];
             for($i = 0; $i < count($invoice->detalles) ; $i++) {

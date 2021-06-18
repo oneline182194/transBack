@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use DB;
+use Illuminate\Support\Facades\DB;
+use App\Models\Comprobante;
 class ExtraController extends Controller
 {
     public function saveComprobante(Request $request){
@@ -42,7 +43,7 @@ class ExtraController extends Controller
             $response = [ 'status'=> true, 'data' => $comprobante_id];
             $codeResponse = 200;
 
-        }catch(Exceptions $e){
+        }catch(\Exception $e){
             DB::rollBack();
             $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
             $codeResponse = 500;
@@ -62,7 +63,7 @@ class ExtraController extends Controller
             $comprobantes = DB::select("CALL misFacturas($request->user_id,$request->page,$request->size)");
             $response = [ 'status'=> true, 'data' => $comprobantes];
             $codeResponse = 200;
-        }catch(Exceptions $e){
+        }catch(\Exception $e){
             $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
             $codeResponse = 500;
         }
@@ -73,6 +74,7 @@ class ExtraController extends Controller
             $comprobante = DB::table('comprobante')->where('id',$idComprobante)->first();
             $comprobante->detalles = DB::table('detalles')->where('comprobante_id',$idComprobante)->get();
             $comprobante->fecha = date("Y-m-d H:i:s"); 
+            $comprobante->numDocfectado = $comprobante->serie . '-' . $comprobante->correlativo; 
             if($comprobante->tipoDocumento_id == '01'){
                 $comprobante->serie = 'FNC1';
                 $comprobante->tipoDocumento_id = '07';
@@ -83,15 +85,29 @@ class ExtraController extends Controller
                 $comprobante->tipoDocumento_id = '07';
                 $comprobante->correlativo = $this->getSerie($comprobante->empresa_id,'BNC1');
             }
+
+            $comprobante = (array)$comprobante;
+
             DB::beginTransaction();
             $rest = DB::table('comprobante')->insertGetId($comprobante);
-            foreach ($comprobante->detalles as $key => $value) {
+            foreach ($comprobante['detalles'] as $value) {
                 $detalles = DB::table('detalles')->insertGetId($value);
             }
             DB::commit();
+
+            $nota = Comprobante::with(['empresa' => function ($query) {
+                $query->where('estado', 1);
+            }, 'detalles.servicio', 'persona'])
+            ->where('id', $rest)->first();
+
+            if ($nota->empresa) {
+                $comprobanteController = new ComprobanteController();
+                $comprobanteController->enviarComprobanteAPI($nota);
+            }
+
             $response = [ 'status'=> true, 'data' => $rest];
             $codeResponse = 200;
-        }catch(Exceptions $e){
+        }catch(\Exception $e){
             DB::rollBack();
             $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
             $codeResponse = 500;
