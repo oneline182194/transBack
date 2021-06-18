@@ -56,6 +56,9 @@
                 @if($data->tipoDocumento_id == '03')
                     BOLETA DE VENTA ELECTRONICA
                 @endif
+                @if($data->tipoDocumento_id == '07')
+                    NOTA DE CREDITO
+                @endif
                 </th>
             </tr>
             <tr>

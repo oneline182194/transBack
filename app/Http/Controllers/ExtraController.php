@@ -72,8 +72,10 @@ class ExtraController extends Controller
     public function AnularComprobanteSunat($idComprobante){
         try{
             $comprobante = DB::table('comprobante')->where('id',$idComprobante)->first();
-            $comprobante->detalles = DB::table('detalles')->where('comprobante_id',$idComprobante)->get();
+            $detalles = DB::table('detalles')->where('comprobante_id',$idComprobante)->get();
             $comprobante->fecha = date("Y-m-d H:i:s"); 
+            $comprobante->id = NULL;
+            $lastComprobante = $comprobante->tipoDocumento_id;
             $comprobante->numDocfectado = $comprobante->serie . '-' . $comprobante->correlativo; 
             if($comprobante->tipoDocumento_id == '01'){
                 $comprobante->serie = 'FNC1';
@@ -85,13 +87,15 @@ class ExtraController extends Controller
                 $comprobante->tipoDocumento_id = '07';
                 $comprobante->correlativo = $this->getSerie($comprobante->empresa_id,'BNC1');
             }
-
-            $comprobante = (array)$comprobante;
-
+            $comprobante = (array) $comprobante;
+            //dd($detalles);
             DB::beginTransaction();
+            $edit = DB::table('comprobante')->where('id', $idComprobante)->update([ 'estado' => 0]);
             $rest = DB::table('comprobante')->insertGetId($comprobante);
-            foreach ($comprobante['detalles'] as $value) {
-                $detalles = DB::table('detalles')->insertGetId($value);
+            foreach ($detalles->toArray() as  $value ) {
+                $value->id = NULL;
+                $value->comprobante_id = $rest;
+                $detalles = DB::table('detalles')->insertGetId((array) $value);
             }
             DB::commit();
 
@@ -99,7 +103,7 @@ class ExtraController extends Controller
                 $query->where('estado', 1);
             }, 'detalles.servicio', 'persona'])
             ->where('id', $rest)->first();
-
+            $nota->tipDocAfectado = $lastComprobante;
             if ($nota->empresa) {
                 $comprobanteController = new ComprobanteController();
                 $comprobanteController->enviarComprobanteAPI($nota);
@@ -107,7 +111,7 @@ class ExtraController extends Controller
 
             $response = [ 'status'=> true, 'data' => $rest];
             $codeResponse = 200;
-        }catch(\Exception $e){
+        }catch(\Exceptions $e){
             DB::rollBack();
             $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
             $codeResponse = 500;

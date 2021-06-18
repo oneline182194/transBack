@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Controllers\ExtraController;
 use Illuminate\Http\Request;
 use DB;
 
@@ -118,7 +118,13 @@ class PasajesController extends Controller
     public function anularPasaje($idComprobante){
         try{
             DB::beginTransaction(); 
-            $edit = DB::table('comprobante')->where('id', $idComprobante)->update([ 'estado' => 0]);
+            $predata = DB::table('comprobante')->where('id', $idComprobante)->first();
+            if($predata->send == 1){
+                $extraController = new ExtraController();
+                $edit = $extraController->AnularComprobanteSunat($idComprobante);
+            }else{
+                $edit = DB::table('comprobante')->where('id', $idComprobante)->update([ 'estado' => 0]);
+            }
             DB::commit();
             $response = [ 'status'=> true, 'data' => $edit];
             $codeResponse = 200;

@@ -49,6 +49,7 @@ class ApiManagerCurl
                 $array['codMotivo'] = '01';
                 $array['desMotivo'] = 'Anulación de Comprobante';
                 $array['numDocfectado'] = $invoice->numDocfectado;
+                $array['tipDocAfectado'] = $invoice->tipDocAfectado;
             }
             
             $detalles = [];
@@ -80,7 +81,6 @@ class ApiManagerCurl
     public static function get($invoice)
     {
         $data = Self::formatData($invoice);
-        
         $curl = curl_init();
         
         curl_setopt_array($curl, array(

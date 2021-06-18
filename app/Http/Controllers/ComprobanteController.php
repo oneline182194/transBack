@@ -42,7 +42,7 @@ class ComprobanteController extends Controller
     public function enviarComprobanteAPI($comprobante)
     {
         $response = ApiManagerCurl::get($comprobante);
-
+        
         if($response['http_code'] == 200) {
             $result = json_decode($response['response'], true);
             if(!$result['success']) {

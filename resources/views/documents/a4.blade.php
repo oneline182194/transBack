@@ -60,6 +60,9 @@
                     @if($data->tipoDocumento_id == '03')
                         BOLETA ELECTRONICA
                     @endif
+                    @if($data->tipoDocumento_id == '07')
+                        NOTA DE CREDITO
+                    @endif
                     </strong><br><br>
                     <strong>{{ $data->serie }}-{{ $data->correlativo }}</strong><br>
                 </th>
