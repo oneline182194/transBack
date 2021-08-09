@@ -6,6 +6,7 @@ class ApiManagerCurl
 {
     private static function formatData($invoice)
     {
+        return response()->json( $invoice);
         if($invoice->tipoDocumento_id === "01" || $invoice->tipoDocumento_id === "03" || $invoice->tipoDocumento_id === "07"){
 
             $cliTipoDoc = ( strlen($invoice->persona->documento) >= 11 ) ? "6" : "1"; 
@@ -64,7 +65,7 @@ class ApiManagerCurl
                     "igv" => $invoice->detalles[$i]->subtotal - $invoice->detalles[$i]->subtotal / 1.18,
                     "porcentajeIgv" => 18,
                     "tipAfeIgv" => 10,
-                    "descripcion" => $invoice->detalles[$i]->servicio->descripcion,
+                    "descripcion" => $invoice->detalles[$i]->producto->nombre,
                     "mtoValorUnitario" => ($invoice->detalles[$i]->subtotal / 1.18) / $invoice->detalles[$i]->cantidad
                 ];
                 

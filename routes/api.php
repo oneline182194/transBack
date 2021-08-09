@@ -33,6 +33,7 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('changePassword',[ LoginController::class,'changePassword' ]);
 });
 
+Route::get('dowloadXml/{numeracion}/{tipoDoc}/{empresa_id}',[ ExportController::class,'getFile' ]);
 
 Route::resource('usuarios',UserController::class)->middleware('auth:sanctum');
 

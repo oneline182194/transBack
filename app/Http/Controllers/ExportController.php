@@ -7,6 +7,7 @@ use Codedge\Fpdf\Fpdf\Fpdf;
 use Illuminate\Http\Request;
 use QrCode;
 use Hashids\Hashids;
+use App\Alice\ApiManagerCurl;
 
 class ExportController extends Controller
 {
@@ -99,5 +100,24 @@ class ExportController extends Controller
         $turnos = DB::select('CALL listaAsientos2('. $idTurno .')');
         $pdf = PDF::loadView('documents.nomina', ['data'=> $header[0],'pasajeros'=> $turnos])->setPaper('A4');
         return $pdf->stream();
+    }
+    public function getFile($numeracion, $tipoDoc, $empresa_id){
+
+        $empresa  = DB::table('empresas')->where('id',$empresa_id)->select('RUC as emp_ruc','token')->first();
+        $curl = new ApiManagerCurl();
+        $filename = $curl->downloadXML($numeracion, $tipoDoc, $empresa);
+        
+        if (file_exists($filename)) {
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="'.basename($filename).'"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($filename));
+            readfile($filename);
+            unlink($filename);
+            exit;
+        }
     }
 }

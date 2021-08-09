@@ -55,7 +55,7 @@ class ComprobanteController extends Controller
                     // Anular numeración
                 }
 
-                Log::error(($result['error']['message'] ?? 'CDR') . ' # Comprobante ID: ' . $comprobante->id);
+                Log::error(($result['error']['message'] ?? 'CDR') . ' # Comprobante ID: ' . $comprobante->id. ' CODE: ' .$code);
 
             } else {
                 DB::table('comprobante')->where('id', $comprobante->id)->update(['send' => 1]);
