@@ -52,10 +52,13 @@ class ComprobanteController extends Controller
                     $code = (int)$result['error']['code'];
                 }
                 if($code >= 2000 && $code <= 3999 ){
-                    // Anular numeración
+                    DB::table('comprobante')->where('id', $comprobante->id)->update(['estado' => 0]);
+                }
+                if($code == 1033){
+                    DB::table('comprobante')->where('id', $comprobante->id)->update(['send' => 1]);
                 }
 
-                Log::error(($result['error']['message'] ?? 'CDR') . ' # Comprobante ID: ' . $comprobante->id. ' CODE: ' .$code);
+                Log::error(($result['error']['message'] ?? 'CDR') . ' # Comprobante ID: ' . $comprobante->id .  ' CODE: ' .$code);
 
             } else {
                 DB::table('comprobante')->where('id', $comprobante->id)->update(['send' => 1]);
