@@ -97,10 +97,10 @@ class GeneralController extends Controller
             }else{
                 $token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.MTYzMA.Z91bggUHVslRNsIRNi38ATsWKVqst0ZLeHjbHc3bN_4';
                 if($tipo == '01'){ 
-                    $jsonString = file_get_contents("https://dniruc.apisperu.com/api/v1/ruc/".$documento."?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im9uZWxpbmUuZnJlZWxhbmNlckBnbWFpbC5jb20ifQ.SZjMhu8PV9BNBtbhFFa2VRtZ_UJwB9Z07ZB85WWYRcE");
+                    $jsonString = file_get_contents("https://dniruc.apisperu.com/api/v1/ruc/".$documento."?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImJ0cl9raXJpdG8xQGhvdG1haWwuY29tIn0.ARWW0n1vWNmJjZAmStfaaTC7OXmnU2VFIsbWAkCxqCs");
                     $setCliente = (array) json_decode($jsonString,true);
                 }else{ 
-                    $jsonString = file_get_contents("https://dniruc.apisperu.com/api/v1/dni/".$documento."?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im9uZWxpbmUuZnJlZWxhbmNlckBnbWFpbC5jb20ifQ.SZjMhu8PV9BNBtbhFFa2VRtZ_UJwB9Z07ZB85WWYRcE");
+                    $jsonString = file_get_contents("https://dniruc.apisperu.com/api/v1/dni/".$documento."?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImJ0cl9raXJpdG8xQGhvdG1haWwuY29tIn0.ARWW0n1vWNmJjZAmStfaaTC7OXmnU2VFIsbWAkCxqCs");
                     $setCliente = (array) json_decode($jsonString,true );
                 }
                 $dataCliente = $this->savePerson($tipo, $documento, $setCliente);
