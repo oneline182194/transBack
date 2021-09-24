@@ -85,7 +85,7 @@
                 <th colspan="6" style="text-align:left;margin-bottom:15px"> {{ $data->dir }}</th>
             </tr>
             <tr >
-                <th colspan="2" style="text-align:right">Tipo Pago:</th>
+                <th colspan="2" style="text-align:right">Pago:</th>
                 <th colspan="6" style="text-align:left;margin-bottom:15px"> Contado</th>
             </tr>
             @if( $data->tipo == 1)
