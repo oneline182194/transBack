@@ -113,7 +113,7 @@
             @if( $data->tipo == 2)
             <tr>
                 <th colspan="8" align="center" style="font-size:12px"> &nbsp;&nbsp;Codigo:
-                    <b style="font-size:14px">{{ $data->code }}</b>
+                    <b style="font-size:8px">{{ $data->code }}</b>
                 </th>
             </tr>
             @endif
