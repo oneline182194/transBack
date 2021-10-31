@@ -99,9 +99,10 @@ class GeneralController extends Controller
                     $jsonString = file_get_contents("https://dniruc.apisperu.com/api/v1/ruc/".$documento."?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImtpcmFtYXVjb0BnbWFpbC5jb20ifQ.YMLqUUC0Rweu2Lzk2ko4Cb3SeQoFVhA_B2T00QQtU2Q");
                     $setCliente = (array) json_decode($jsonString,true);
                 }else{ 
-                    $jsonString = file_get_contents("https://consulta.api-peru.com/api/dni/".$documento);
+                    $jsonString = file_get_contents("https://dniruc.apisperu.com/api/v1/dni/".$documento."?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImtpcmFtYXVjb0BnbWFpbC5jb20ifQ.YMLqUUC0Rweu2Lzk2ko4Cb3SeQoFVhA_B2T00QQtU2Q");
+                    // $jsonString = file_get_contents("https://consulta.api-peru.com/api/dni/".$documento);
                     $setCliente = (array) json_decode($jsonString,true );
-                    $setCliente = $setCliente['data'];
+                    // $setCliente = $setCliente['data'];
                 }
                 $dataCliente = $this->savePerson($tipo, $documento, $setCliente);
                 $dataCliente['nombresCompletos'] = addslashes($dataCliente['nombres']);
@@ -118,7 +119,8 @@ class GeneralController extends Controller
         if($tipo == '01'){
             $setPersona = [ 'documento' => $documento, 'nombres' => addslashes($persona['razonSocial']) ,'paterno' => '', 'materno' => '', 'direccion' => addslashes($persona['direccion'])];
         }else{
-            $setPersona = [ 'documento' => $documento, 'nombres' => $persona['nombre_completo'],'paterno' => '', 'materno' => '',  'direccion' => '' ];
+            $setPersona = [ 'documento' => $documento, 'paterno' => $persona['apellidoPaterno'], 'materno' => $persona['apellidoMaterno'], 'nombres' => $persona['nombres'], 'direccion' => '' ];
+            // $setPersona = [ 'documento' => $documento, 'nombres' => $persona['nombre_completo'],'paterno' => '', 'materno' => '',  'direccion' => '' ];
         }
         $persona_id = DB::table('personas')->insertGetId($setPersona);
         $getCliente = ['id' => $persona_id,'documento'=>$documento, 'nombres' => $setPersona['nombres'] .' '. $setPersona['paterno'] . ' '. $setPersona['materno'], 'direccion'=> $setPersona['direccion'] ?? null ];
