@@ -88,7 +88,7 @@ class GeneralController extends Controller
         $response = [ 'status'=> true, 'data' =>  $list];
         return response()->json( $response, 200 );
     }
-    public function buscarCliente($tipo,$documento){
+    public function buscarCliente($tipo,$documento, $licencia = null){
         try {
             $getCliente = DB::table('personas')->where('documento',$documento)->get();
             if(count($getCliente) > 0){
@@ -96,15 +96,21 @@ class GeneralController extends Controller
                 $dataCliente->nombresCompletos = $dataCliente->nombres .' '. $dataCliente->paterno .' '. $dataCliente->materno;
             }else{
                 if($tipo == '01'){ 
-                    $jsonString = file_get_contents("https://dniruc.apisperu.com/api/v1/ruc/".$documento."?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImtpcmFtYXVjb0BnbWFpbC5jb20ifQ.YMLqUUC0Rweu2Lzk2ko4Cb3SeQoFVhA_B2T00QQtU2Q");
+                    $jsonString = file_get_contents("https://dniruc.apisperu.com/api/v1/ruc/".$documento."?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im9uZWxpbmUxODIxQGhvdG1haWwuY29tIn0.KrjVnfvICYxsRcmPR7sTdYQXIoiCRgJTyR2u3pjyDOw");
                     $setCliente = (array) json_decode($jsonString,true);
                 }else{ 
-                    $jsonString = file_get_contents("https://dniruc.apisperu.com/api/v1/dni/".$documento."?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImtpcmFtYXVjb0BnbWFpbC5jb20ifQ.YMLqUUC0Rweu2Lzk2ko4Cb3SeQoFVhA_B2T00QQtU2Q");
-                    // $jsonString = file_get_contents("https://consulta.api-peru.com/api/dni/".$documento);
-                    $setCliente = (array) json_decode($jsonString,true );
-                    // $setCliente = $setCliente['data'];
+
+                    if($licencia){
+                        $jsonString = file_get_contents("https://dniruc.apisperu.com/api/v1/dni/".$documento."?token=$licencia");
+                        $setCliente = (array) json_decode($jsonString,true );
+                        $dataCliente = $this->savePerson($tipo, $documento, $setCliente,1);
+                    }else{
+                        $jsonString = file_get_contents("https://consulta.api-peru.com/api/dni/".$documento);
+                        $setCliente = (array) json_decode($jsonString,true );
+                        $setCliente = $setCliente['data'];
+                        $dataCliente = $this->savePerson($tipo, $documento, $setCliente,2);
+                    }
                 }
-                $dataCliente = $this->savePerson($tipo, $documento, $setCliente);
                 $dataCliente['nombresCompletos'] = addslashes($dataCliente['nombres']);
             }
             $response = [ 'status'=> true, 'data' => $dataCliente];
@@ -115,12 +121,15 @@ class GeneralController extends Controller
         }
         return response()->json( $response, $codeResponse );
     }
-    public function savePerson($tipo, $documento, $persona){
+    public function savePerson($tipo, $documento, $persona, $type){
         if($tipo == '01'){
             $setPersona = [ 'documento' => $documento, 'nombres' => addslashes($persona['razonSocial']) ,'paterno' => '', 'materno' => '', 'direccion' => addslashes($persona['direccion'])];
         }else{
-            $setPersona = [ 'documento' => $documento, 'paterno' => $persona['apellidoPaterno'], 'materno' => $persona['apellidoMaterno'], 'nombres' => $persona['nombres'], 'direccion' => '' ];
-            // $setPersona = [ 'documento' => $documento, 'nombres' => $persona['nombre_completo'],'paterno' => '', 'materno' => '',  'direccion' => '' ];
+            if($type == 1){
+                $setPersona = [ 'documento' => $documento, 'paterno' => $persona['apellidoPaterno'], 'materno' => $persona['apellidoMaterno'], 'nombres' => $persona['nombres'], 'direccion' => '' ];
+            }else{
+                $setPersona = [ 'documento' => $documento, 'nombres' => $persona['nombre_completo'],'paterno' => '' , 'materno' => '',  'direccion' => '' ];
+            }
         }
         $persona_id = DB::table('personas')->insertGetId($setPersona);
         $getCliente = ['id' => $persona_id,'documento'=>$documento, 'nombres' => $setPersona['nombres'] .' '. $setPersona['paterno'] . ' '. $setPersona['materno'], 'direccion'=> $setPersona['direccion'] ?? null ];
@@ -183,6 +192,17 @@ class GeneralController extends Controller
             ];
             $returns = DB::table('servicios')->insertGetId($data);
             $response = [ 'status'=> true, 'data' => $returns];
+            $codeResponse = 200;
+        }catch(\Exceptions $e){
+            $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
+            $codeResponse = 500;
+        }
+        return response()->json( $response, $codeResponse );
+    }
+    public function getLicencias(){
+        try{
+            $data = DB::table('licencias')->get();
+            $response = [ 'status'=> true, 'data' => $data];
             $codeResponse = 200;
         }catch(\Exceptions $e){
             $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];

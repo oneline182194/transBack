@@ -55,10 +55,11 @@ Route::group(['prefix' => 'config'], function () {
 
     Route::post('editarEmpresa',[GeneralController::class,'editarEmpresa']);
 
-    Route::get('buscarCliente/{tipo}/{documento}',[ GeneralController::class,'buscarCliente' ]);
+    Route::get('buscarCliente/{tipo}/{documento}/{licencia?}',[ GeneralController::class,'buscarCliente' ]);
 
     Route::post('saveServicio',[GeneralController::class,'saveServicio']);
-    
+
+    Route::get('getLicencias',[GeneralController::class,'getLicencias']);
 });
 Route::group(['prefix' => 'pasajes'], function () {
     Route::get('listTurnos/{origen}/{fecha}',[ PasajesController::class,'listTurnos' ]);
