@@ -98,6 +98,7 @@ class GeneralController extends Controller
                 if($tipo == '01'){ 
                     $jsonString = file_get_contents("https://dniruc.apisperu.com/api/v1/ruc/".$documento."?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im9uZWxpbmUxODIxQGhvdG1haWwuY29tIn0.KrjVnfvICYxsRcmPR7sTdYQXIoiCRgJTyR2u3pjyDOw");
                     $setCliente = (array) json_decode($jsonString,true);
+                    $dataCliente = $this->savePerson($tipo, $documento, $setCliente);
                 }else{ 
 
                     if($licencia){
