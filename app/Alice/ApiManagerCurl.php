@@ -43,6 +43,9 @@ class ApiManagerCurl
                 "valorVenta" => $invoice->monto / 1.18,
                 "subTotal" => $invoice->monto,
                 "mtoImpVenta" => $invoice->monto,
+                "formaPago" => [
+                    "tipo" => "Contado"
+                ],
             ];
 
             if ($invoice->tipoDocumento_id === "07") {
