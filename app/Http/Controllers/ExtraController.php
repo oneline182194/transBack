@@ -87,8 +87,8 @@ class ExtraController extends Controller
                 $comprobante->tipoDocumento_id = '07';
                 $comprobante->correlativo = $this->getSerie($comprobante->empresa_id,'BNC1');
             }
+            $comprobante->estado = 1;
             $comprobante = (array) $comprobante;
-            //dd($detalles);
             DB::beginTransaction();
             $edit = DB::table('comprobante')->where('id', $idComprobante)->update([ 'estado' => 0]);
             $rest = DB::table('comprobante')->insertGetId($comprobante);
