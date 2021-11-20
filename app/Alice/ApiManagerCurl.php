@@ -53,6 +53,7 @@ class ApiManagerCurl
                 $array['desMotivo'] = 'Anulacion de Comprobante';
                 $array['numDocfectado'] = $invoice->numDocfectado;
                 $array['tipDocAfectado'] = $invoice->tipDocAfectado;
+                unset($array['formaPago']);
             }
             
             $detalles = [];

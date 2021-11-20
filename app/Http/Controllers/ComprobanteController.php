@@ -23,7 +23,6 @@ class ComprobanteController extends Controller
         }, 'detalles.servicio', 'persona'])
         ->whereIn('tipoDocumento_id', ['01', '03'])
         ->whereBetween('fecha', [$fechaInicio . ' 00:00:00', $date . ' 23:59:59'])
-        ->whereBetween('tipoDocumento_id', ['01', '03'])
         ->where('send', 0)
         ->where('estado', 1)
         ->get();
