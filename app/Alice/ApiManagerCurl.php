@@ -88,7 +88,7 @@ class ApiManagerCurl
         $curl = curl_init();
         
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://alice.monologic.ws/api/comprobantes/send",
+            CURLOPT_URL => "https://alice.inubyte.com/api/comprobantes/send",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
@@ -127,7 +127,7 @@ class ApiManagerCurl
         $curl = curl_init();
         
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://alice.monologic.ws/api/files/downloadXML",
+            CURLOPT_URL => "https://alice.inubyte.com/api/files/downloadXML",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
