@@ -42,8 +42,8 @@ class ExportController extends Controller
             $gravado = (floatval ($comprobante[0]->monto) / 1.18);
             $comprobante[0]->gravado = round( $gravado, 4, PHP_ROUND_HALF_EVEN);
             $comprobante[0]->igv = $comprobante[0]->monto -  $comprobante[0]->gravado;
-            //dd($comprobante[0]);
-            $qrcode = base64_encode(QrCode::format('svg')->size(120)->errorCorrection('H')->generate('string'));
+            $link = "http://34.75.174.166:86/api/dowloadXml/".$comprobante[0]->serie."-".$comprobante[0]->correlativo."/".$comprobante[0]->tipoDocumento_id."/".$comprobante[0]->empresa_id;
+            $qrcode = base64_encode(QrCode::format('svg')->size(120)->errorCorrection('H')->generate($link));
             $customPaper = array(0,0,170.07,600);
             $pdf = PDF::loadView('documents.comprobante', ['data'=> $comprobante[0],'qrcode'=> $qrcode])->setPaper($customPaper);
             return $pdf->stream();
@@ -84,8 +84,8 @@ class ExportController extends Controller
             $gravado = (floatval ($comprobante[0]->monto) / 1.18);
             $comprobante[0]->gravado = round( $gravado, 4, PHP_ROUND_HALF_EVEN);
             $comprobante[0]->igv = $comprobante[0]->monto -  $comprobante[0]->gravado;
-            //dd($comprobante[0]);
-            $qrcode = base64_encode(QrCode::format('svg')->size(120)->errorCorrection('H')->generate('string'));
+            $link = "http://34.75.174.166:86/api/dowloadXml/".$comprobante[0]->serie."-".$comprobante[0]->correlativo."/".$comprobante[0]->tipoDocumento_id."/".$comprobante[0]->empresa_id;
+            $qrcode = base64_encode(QrCode::format('svg')->size(120)->errorCorrection('H')->generate($link));
             $customPaper = array(0,0,170.07,600);
             $pdf = PDF::loadView('documents.a4', ['data'=> $comprobante[0],'qrcode'=> $qrcode])->setPaper('A4');
             return $pdf->stream();

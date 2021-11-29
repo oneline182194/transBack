@@ -159,7 +159,7 @@
             </tr>
             <tr>
                 <td colspan="8" style="text-align:center;">
-                    <img width="50" src="data:image/png;base64, {!! $qrcode !!}">
+                    <img width="80" src="data:image/png;base64, {!! $qrcode !!}">
                 </td>
             </tr>
             <tr>
