@@ -34,6 +34,8 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::get('dowloadXml/{numeracion}/{tipoDoc}/{empresa_id}',[ ExportController::class,'getFile' ]);
+Route::get('apiComprobantes/{documento}',[ GeneralController::class,'apiComprobantes' ]);
+
 
 Route::resource('usuarios',UserController::class)->middleware('auth:sanctum');
 
@@ -73,6 +75,8 @@ Route::group(['prefix' => 'envios'], function () {
     Route::post('listEnvios',[ EnviosController::class,'listEnvios' ]);
     Route::post('saveEnvios',[ EnviosController::class,'saveEnvios' ]);
     Route::post('despachado',[ EnviosController::class,'despachado' ]);
+    Route::get('deleteDespachado/{id}',[ EnviosController::class,'deleteDespachado' ]);
+    
 
     Route::post('listEntregas',[ EnviosController::class,'listEntregas' ]);
     Route::post('recibirEnvio',[ EnviosController::class,'recibirEnvio' ]); 

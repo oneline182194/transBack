@@ -19,12 +19,13 @@ class EnviosController extends Controller
             }else{
                 $search = $request->buscar;
             }
-            $envios = DB::select("CALL getEnvios($request->estado, $request->servicio,'$request->parametro','$search',$request->page,$request->size)");
-            $totalRegistros = DB::select("CALL getEnviosRes($request->estado, $request->servicio,'$request->parametro','$search',$request->page,$request->size)");
+            $envios = DB::select("CALL getEncomienda($request->estado)");
+
             foreach ($envios as $key => $row) {
-                $envios[$key]->code = $hashids->encode($row->envioId);
+                $envios[$key]->clave = $hashids->encode($row->id);
+                $envios[$key]->carros = DB::table('envio_carro')->where('envioId',$envios[$key]->id )->get();
             }
-            $response = [ 'status'=> true, 'data' => $envios, 'total'=> $totalRegistros[0]->totalRegistros ];
+            $response = [ 'status'=> true, 'data' => $envios ];
             $codeResponse = 200;
         }catch(\Exceptions $e){
             $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
@@ -134,13 +135,36 @@ class EnviosController extends Controller
     }
     public function despachado(Request $request){
         try{
-            $data = [
-                'estadoEnvio_id' => 2,
-                'fechaEnvio' => $request->fecha.'T'.$request->hora,
-                'placa'=> $request->placa,
-                'personal_id'=> $request->personal_id
-            ];
-            $despachado = DB::table('envios')->where('id',$request->envioId)->update($data);
+            $dt = $request->all();
+
+            foreach ( $dt as  $key => $row){
+                $data = [ 
+                        'envioId' => $row['envioId'],
+                        'placa' => $row['placa'],
+                        'personal_id'=> $row['personal_id'],
+                        'carga'=> $row['carga'],
+                        'fecha' => $row['fecha'],
+                        'hora'=> $row['hora'],
+                        'estado'=>1
+                    ];
+                if($row['id'] == 0){
+                    $despachado = DB::table('envio_carro')->insert($data);
+                }else{
+                    $despachado = DB::table('envio_carro')->where('id',$row['id'])->update($data);
+                }
+                
+            }
+            $response = [ 'status'=> true, 'data' => $despachado];
+            $codeResponse = 200;
+        }catch (\Exceptions $e) {
+            $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
+            $codeResponse = 500;
+        }
+        return response()->json( $response, $codeResponse );
+    }
+    public function deleteDespachado($id){
+        try{
+            $despachado =DB::table('envio_carro')->where('id', $id)->delete();
             $response = [ 'status'=> true, 'data' => $despachado];
             $codeResponse = 200;
         }catch (\Exceptions $e) {

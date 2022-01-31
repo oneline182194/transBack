@@ -211,4 +211,17 @@ class GeneralController extends Controller
         }
         return response()->json( $response, $codeResponse );
     }
+    public function apiComprobantes($documento){
+        try{
+            $person = DB::table('personas')->where('documento', $documento )->first();
+            $comprobantes = DB::table('comprobante')->where('comprobante.personas_id',$person->id)->where('comprobante.estado',1)->join('tipodocumento','tipodocumento.codigo','comprobante.tipoDocumento_id')->select('comprobante.*','tipodocumento.nombre as comprobante')->get();
+            $response = [ 'status'=> true, 'cliente' => $person, 'comprobantes' => $comprobantes ];
+            $codeResponse = 200;
+        }catch(\Exceptions $e){
+            $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
+            $codeResponse = 500;
+        }
+        return response()->json( $response, $codeResponse );
+
+    }
 }
