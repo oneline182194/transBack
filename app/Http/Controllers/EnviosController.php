@@ -23,7 +23,12 @@ class EnviosController extends Controller
 
             foreach ($envios as $key => $row) {
                 $envios[$key]->clave = $hashids->encode($row->id);
-                $envios[$key]->carros = DB::table('envio_carro')->where('envioId',$envios[$key]->id )->get();
+                $envios[$key]->carros = DB::table('envio_carro')
+                                                ->where('envioId',$envios[$key]->id )
+                                                ->join('personal as pe','pe.id','envio_carro.personal_id')
+                                                ->join('personas as p','p.id','pe.personas_id')
+                                                ->select('envio_carro.*','p.nombres as chofer')
+                                                ->get();
             }
             $response = [ 'status'=> true, 'data' => $envios ];
             $codeResponse = 200;
@@ -48,8 +53,7 @@ class EnviosController extends Controller
         }
         return response()->json( $response, $codeResponse );
     }
-    public function saveEnvios(Request $request){
-        //return response()->json( $request );
+    public function generarComprobante(Request $request){
         $comprobante = [
             'fecha' => date("Y-m-d H:i"),
             'personas_id'=> $request->personas_id,
@@ -98,6 +102,42 @@ class EnviosController extends Controller
                 'estadoEnvio_id' => 1,
                 'comprobante_id' => $comprobante,
                 'detalle_id'=>$detalles,
+                'users_id' => $request->user_id,
+
+                'balija' => $request->balija,
+                'xcobrar' => $request->xcobrar,
+                'taxi' => $request->taxi,
+
+                'ro' => intval($request->ro),
+                'rd' => intval($request->rd),
+            ]);
+            DB::commit();
+            $response = [ 'status'=> true, 'data' => $envios];
+            $codeResponse = 200;
+
+        } catch (\Exceptions $e) {
+            DB::rollBack();
+            $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
+            $codeResponse = 500;
+        }
+        return response()->json( $response, $codeResponse );
+    }
+    public function saveEnvios(Request $request){
+       
+        try {
+            DB::beginTransaction(); 
+
+            $envios = DB::table('envios')->insertGetId([
+                'personas_id' => $request->personas_id,
+                'receptor' => $request->nombresD,
+                'descripcion' => $request->contenido,
+                'destino' => $request->direccionD,
+                'fechaAdqui' => date("Y-m-d H:i"),
+                'fechaEnvio' => null,
+                'fechaRecepcion' => null,
+                'estadoEnvio_id' => 1,
+                'comprobante_id' => null,
+                'detalle_id'=>null,
                 'users_id' => $request->user_id,
 
                 'balija' => $request->balija,
@@ -176,11 +216,10 @@ class EnviosController extends Controller
     public function recibirEnvio(Request $request){
         try{
             $data = [
-                'estadoEnvio_id' => 3,
-                'user_rep' => $request->username,
-                'fechaRecepcion' => date("Y-m-d H:i:s")
+                'personal' => $request->username,
+                'fechaRecep' => date("Y-m-d H:i:s")
             ];
-            $despachado = DB::table('envios')->where('id',$request->idEnvio)->update($data);
+            $despachado = DB::table('envio_carro')->where('id',$request->idEnvio)->update($data);
             $response = [ 'status'=> true, 'data' => $despachado ];
             $codeResponse = 200;
         }catch (\Exceptions $e) {

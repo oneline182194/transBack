@@ -88,6 +88,11 @@
                 <th colspan="2" style="text-align:right">Pago:</th>
                 <th colspan="6" style="text-align:left;margin-bottom:15px"> Contado</th>
             </tr>
+            <tr >
+                <th colspan="8" align="left"> &nbsp;&nbsp;Nota:
+                    <b style="font-size:8px">{{ $data->nota }}</b>
+                </th>
+            </tr>
             @if( $data->tipo == 1)
             <tr >
                 <th colspan="8"> Asiento(s):
@@ -96,6 +101,10 @@
                     @endforeach 
                 </th>
             </tr>
+            <tr>
+                <th colspan="2" style="text-align:right">Chofer:</th>
+                <th colspan="6" style="text-align:left;margin-bottom:15px">{{ $data->chofer[0]->chofer }}</th>
+            </tr>
             @endif
            
             <tr >
@@ -103,11 +112,7 @@
                     <b style="font-size:8px">{{ $data->user }}</b>
                 </th>
             </tr>
-            <tr >
-                <th colspan="8" align="left"> &nbsp;&nbsp;Nota:
-                    <b style="font-size:8px">{{ $data->nota }}</b>
-                </th>
-            </tr>
+            
 
             @if( $data->tipo == 2)
             <tr>

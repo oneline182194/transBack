@@ -27,8 +27,11 @@ class ExportController extends Controller
                                                                         ->join('servicios as s','s.id','=','d.servicios_id')
                                                                         ->join('pasajes as p','p.id','=','d.pasaje_id')
                                                                         ->join('turnos as t','t.id','=','p.turnos_id')
-                                                                        ->select('d.*','s.descripcion','p.asiento','t.hora')
+                                                                        ->select('d.*','s.descripcion','p.asiento','t.hora','t.id as turno')
                                                                         ->get();
+                $comprobante[0]->turnoId = $comprobante[0]->detalles[0]->turno; 
+                $turno = $comprobante[0]->turnoId;
+                $comprobante[0]->chofer = DB::select("CALL getChofer($turno)");
             }else{
                 $comprobante[0]->detalles = DB::table('detalles as d')->where('comprobante_id',$id)
                                                                         ->join('servicios as s','s.id','=','d.servicios_id')
@@ -45,6 +48,8 @@ class ExportController extends Controller
             $link = "http://34.75.174.166:86/api/dowloadXml/".$comprobante[0]->serie."-".$comprobante[0]->correlativo."/".$comprobante[0]->tipoDocumento_id."/".$comprobante[0]->empresa_id;
             $qrcode = base64_encode(QrCode::format('svg')->size(120)->errorCorrection('H')->generate($link));
             $customPaper = array(0,0,170.07,600);
+
+            //dd($comprobante[0]);
             $pdf = PDF::loadView('documents.comprobante', ['data'=> $comprobante[0],'qrcode'=> $qrcode])->setPaper($customPaper);
             return $pdf->stream();
 
