@@ -96,6 +96,7 @@ Route::group(['prefix' => 'comprobantes'], function () {
 Route::group(['prefix' => 'extra'], function () {
     Route::post('saveComprobante',[ ExtraController::class,'saveComprobante' ]); 
     Route::post('listaRegistros',[ ExtraController::class,'listaRegistros' ]); 
+    Route::post('editPerson',[ GeneralController::class,'editPerson' ]); 
 });
 Route::group(['prefix' => 'reportes'], function () {
     Route::post('reporteDocumentos',[ ReportesController::class,'reporteDocumentos' ]);

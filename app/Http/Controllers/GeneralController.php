@@ -224,4 +224,25 @@ class GeneralController extends Controller
         return response()->json( $response, $codeResponse );
 
     }
+    public function editPerson(Request $request){
+        try{
+            $data = DB::table('personas')->where('id',$request->id)
+                                        ->update([
+                                            'documento' => $request->documento,
+                                            'paterno' => $request->paterno,
+                                            'materno' => $request->materno,
+                                            'nombres' => $request->nombres,
+                                            'direccion' => $request->direccion,
+                                            'telefono' => $request->telefono,
+                                            'sexo'=> $request->sexo]
+                                        );
+            $response = [ 'status'=> true, 'data' => $data ];
+            $codeResponse = 200;
+        }catch(\Exceptions $e){
+            $response = [ 'status'=> true, 'mensaje' => substr($e->errorInfo[2], 54), 'code' => $e->getCode()];
+            $codeResponse = 500;
+        }
+        return response()->json( $response, $codeResponse );
+    }
+
 }

@@ -19,7 +19,7 @@
        }
     </style>
 </head>
-<body style="padding:0px 12px">
+<body style="padding:0px 20px">
     <table>
         <thead>
             <tr>
@@ -64,13 +64,20 @@
             <tr>
                 <th colspan="8" style="padding:0px 0px 4px 0px;font-size:11px">{{ $data->serie }} - {{  str_pad(( $data->correlativo ), 4, "0", STR_PAD_LEFT) }}</th>            
             </tr>
+             @if($data->tipoDocumento_id == '07')
+            <tr>
+                <th colspan="8" align="left"> &nbsp;&nbsp;Doc. Afec.:
+                    <b style="font-size:8px">{{ $data->numDocfectado }}</b>
+                </th>
+            </tr>
+            @endif
             <tr>
                 <th colspan="2" style="text-align:right">Fecha: </th>
                 <th colspan="6" style="text-align:left"> {{  date("Y-m-d", strtotime($data->fecha))  }}  @if(count($data->detalles) > 0 &&  $data->tipo == 1)  {{   date("g:i a", strtotime( $data->detalles[0]->hora))  }} @else {{ date("h:m a", strtotime($data->fecha)) }} @endif</th>
             </tr>
             <tr>
                 <th colspan="2" style="text-align:right">Cliente:</th>
-                <th colspan="6" style="text-align:left"> {{ $data->nombres }} {{ $data->paterno }}</th>
+                <th colspan="6" style="text-align:left"> {{ $data->nombres }} {{ $data->paterno }} {{ $data->materno }}</th>
             </tr>
             <tr >
                 @if($data->tipoDocumento_id == '01')

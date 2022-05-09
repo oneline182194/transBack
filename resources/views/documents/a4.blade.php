@@ -76,7 +76,7 @@
                     <p style="font-size:11px;padding:1px 8px;margin:0">Tipo Moneda </p>
                     <p style="font-size:11px;padding:1px 8px;margin:0">Observación </p>
                     <p style="font-size:11px;padding:1px 8px;margin:0">Tipo de Pago </p>
-                    @if($data->tipoDocumento_id == '07')<p style="font-size:11px;padding:1px 8px;margin:0">Relación: </p> @endif
+                    @if($data->tipoDocumento_id == '07')<p style="font-size:11px;padding:1px 8px;margin:0">Documento Afectado: </p> @endif
                 </th>
                 <td colspan="9" style="border-left:none">
                     <p style="font-size:11px;margin:0;padding:1px 0px">: &nbsp;&nbsp;{{ Carbon\Carbon::parse($data->fecha)->format('d / m / Y') }}</p>
